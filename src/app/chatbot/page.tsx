@@ -11,6 +11,7 @@ export default function Chat() {
         To the Home!
       </Link>
 
+      {/* h-full 또는 h-screen 으로 높이 조절 */}
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
           <div className="overflow-y-auto">
