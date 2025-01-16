@@ -9,6 +9,8 @@ export default function Home() {
       <Link href={"/tts"}>Go to TTS!</Link>
 
       <Link href={"/whisper"}>Go to Whisper!</Link>
+
+      <Link href={"/chatbot"}>Go to Chatbot!</Link>
     </div>
   );
 }
