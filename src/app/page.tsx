@@ -7,10 +7,9 @@ export default function Home() {
       <div>openai-api-practice Home</div>
 
       <Link href={"/tts"}>Go to TTS!</Link>
-
       <Link href={"/whisper"}>Go to Whisper!</Link>
-
       <Link href={"/chatbot"}>Go to Chatbot!</Link>
+      <Link href={"/recorder"}>Go to Recorder!</Link>
     </div>
   );
 }
