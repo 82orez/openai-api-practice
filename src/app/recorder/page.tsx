@@ -19,7 +19,7 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <Link href={"/"} className={"fixed right-10 top-10 rounded-md bg-pink-300 p-4"}>
+      <Link href={"/"} className={"fixed right-5 top-5 rounded-md bg-pink-300 p-4"}>
         To the Home!
       </Link>
 

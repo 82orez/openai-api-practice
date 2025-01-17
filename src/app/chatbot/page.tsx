@@ -7,9 +7,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
+
   return (
     <div className="flex h-screen w-full flex-col items-center justify-between">
-      <Link href={"/"} className={"fixed right-10 top-10 rounded-md bg-pink-300 p-4"}>
+      <Link href={"/"} className={"fixed right-5 top-5 rounded-md bg-pink-300 p-4"}>
         To the Home!
       </Link>
 
