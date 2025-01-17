@@ -2,6 +2,7 @@
 
 import { useRecordingStore } from "@/stores/recordingStore";
 import { useState } from "react";
+import Link from "next/link";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
@@ -18,6 +19,10 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
+      <Link href={"/"} className={"fixed right-10 top-10 rounded-md bg-pink-300 p-4"}>
+        To the Home!
+      </Link>
+
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
         className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}>
