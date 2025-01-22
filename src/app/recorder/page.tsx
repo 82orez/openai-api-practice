@@ -27,7 +27,7 @@ const AudioRecorder = () => {
       const formData = new FormData();
       formData.append("audio", new File([audioBlob], "recording.mp3"));
 
-      const uploadResponse = await fetch("/api/upload", {
+      const uploadResponse = await fetch("/api/recordings", {
         method: "POST",
         body: formData,
       });
@@ -37,7 +37,7 @@ const AudioRecorder = () => {
         setUploadedURL(result.url);
         alert(`File saved at: ${result.url}`);
       } else {
-        alert("Failed to upload file");
+        alert("Failed to record file");
       }
     } catch (error) {
       console.error("Error uploading file:", error);

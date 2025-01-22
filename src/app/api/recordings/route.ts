@@ -14,8 +14,8 @@ export async function POST(req: NextRequest) {
     // 파일을 버퍼로 변환
     const buffer = Buffer.from(await audioFile.arrayBuffer());
 
-    // 파일 저장 경로 지정 (./public/uploads 폴더에 저장)
-    const filePath = path.join(process.cwd(), "public", "uploads", audioFile.name);
+    // 파일 저장 경로 지정 (./public/recordings 폴더에 저장)
+    const filePath = path.join(process.cwd(), "public", "recordings", audioFile.name);
 
     // 폴더가 없으면 생성
     if (!fs.existsSync(path.dirname(filePath))) {
@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: "File uploaded successfully",
-      url: `/uploads/${audioFile.name}`,
+      url: `/recordings/${audioFile.name}`,
     });
   } catch (error) {
-    return NextResponse.json({ error: "File upload failed" }, { status: 500 });
+    return NextResponse.json({ error: "File record failed" }, { status: 500 });
   }
 }
