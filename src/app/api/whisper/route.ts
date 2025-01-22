@@ -10,7 +10,7 @@ const openai = new OpenAI({
 // * GET 요청으로 처리하는 부분.
 export async function GET(request: Request) {
   const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream("./speech.mp3"),
+    file: fs.createReadStream("./public/uploads/recording.mp3"),
     model: "whisper-1",
   });
 
