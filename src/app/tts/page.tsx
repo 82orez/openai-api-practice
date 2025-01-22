@@ -13,6 +13,11 @@ export default function TTSPage() {
           onClick={async () => {
             const res = await axios("/api/tts", {});
             const result = await res.data;
+            if (result.success) {
+              window.location.href = result.fileUrl;
+            } else {
+              alert("Failed to generate audio.");
+            }
             return;
           }}>
           Start making Mp3 file!

@@ -10,8 +10,7 @@ export async function GET(req: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY!, // 환경 변수에서 API 키 로드
     });
 
-    const textToConvert =
-      "Nowadays, I often see people carrying water bottles with them to make sure they drink enough. How much water do you drink a day, Phil?";
+    const textToConvert = "What a wonderful day!!";
 
     // OpenAI API 호출
     const response = await openai.audio.speech.create({
