@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     });
 
     // 파일 저장 경로 설정
-    const outputPath = path.join(process.cwd(), "public", "tts.mp3");
+    const outputPath = path.join(process.cwd(), "public/tts", "tts.mp3");
 
     // 응답 스트림을 파일로 저장
     const buffer = Buffer.from(await response.arrayBuffer());
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Audio file created successfully!",
-      fileUrl: "/tts.mp3",
+      fileUrl: "/tts/tts.mp3",
     });
   } catch (error) {
     console.error("TTS Error:", error);
