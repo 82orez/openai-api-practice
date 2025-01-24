@@ -4,12 +4,14 @@ import { useRecordingStore } from "@/stores/recordingStore";
 import { useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [text, setText] = useState("");
 
   const handleStopRecording = async () => {
@@ -83,15 +85,17 @@ const AudioRecorder = () => {
       {audioURL && (
         <button
           onClick={async () => {
+            setIsLoading(true);
             const audioBlob = await handleSaveRecording();
             const requestWhisperServer = await requestToWhisperServer();
+            setIsLoading(false);
           }}
           className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
           Save Recording to Server(서버에 저장하고 텍스트 생성하기)
         </button>
       )}
 
-      <div>{text}</div>
+      <div className={"mt-10"}>{isLoading ? <AiOutlineLoading3Quarters className={"animate-spin text-xl"} /> : <div>{text}</div>}</div>
     </div>
   );
 };
