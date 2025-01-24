@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import RecordToTextPage from "@/app/record-text/page";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <Link href={"/whisper"}>Go to Whisper!</Link>
       <Link href={"/chatbot"}>Go to Chatbot!</Link>
       <Link href={"/recorder"}>Go to Recorder!</Link>
+      <Link href={"/record-text"}>Go to Record To Text Page!</Link>
     </div>
   );
 }

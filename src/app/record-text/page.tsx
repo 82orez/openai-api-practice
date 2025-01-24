@@ -3,11 +3,14 @@
 import { useRecordingStore } from "@/stores/recordingStore";
 import { useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
+
+  const [text, setText] = useState("");
 
   const handleStopRecording = async () => {
     const audioBlob = await stopRecording();
@@ -35,7 +38,6 @@ const AudioRecorder = () => {
       const result = await uploadResponse.json();
       if (result.url) {
         setUploadedURL(result.url);
-        alert(`File saved at: ${result.url}`);
       } else {
         alert("Failed to record file");
       }
@@ -43,6 +45,13 @@ const AudioRecorder = () => {
       console.error("Error uploading file:", error);
       alert("An error occurred while saving the recording.");
     }
+  };
+
+  const requestToWhisperServer = async () => {
+    const res = await axios("/api/whisper", {});
+    const result = await res.data;
+    setText(result);
+    return;
   };
 
   return (
@@ -67,7 +76,12 @@ const AudioRecorder = () => {
       )}
 
       {audioURL && (
-        <button onClick={handleSaveRecording} className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
+        <button
+          onClick={async () => {
+            const audioBlob = await handleSaveRecording();
+            const requestWhisperServer = await requestToWhisperServer();
+          }}
+          className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
           Save Recording to Server(서버에 저장하기)
         </button>
       )}
@@ -80,6 +94,8 @@ const AudioRecorder = () => {
           </a>
         </div>
       )}
+
+      <div>{text}</div>
     </div>
   );
 };
