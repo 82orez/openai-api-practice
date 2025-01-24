@@ -8,6 +8,10 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
 
+  // * 마지막 메시지 추출
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const lastText = lastMessage?.role === "assistant" ? lastMessage.content : "";
+
   return (
     <div className="flex h-screen w-full flex-col items-center justify-between">
       <Link href={"/"} className={"fixed right-5 top-5 rounded-md bg-pink-300 p-4"}>
@@ -28,7 +32,13 @@ export default function Chat() {
               </div>
             ))}
           </div>
-          <div className="overflow-y-auto"></div>
+
+          {/* 마지막 응답 텍스트 출력 */}
+          {lastText && (
+            <div className="mt-2 rounded-lg bg-green-200 p-2 text-center">
+              <strong>Last Response:</strong> {lastText}
+            </div>
+          )}
 
           <form className="mt-4 flex w-full" onSubmit={handleSubmit}>
             <input
@@ -40,7 +50,7 @@ export default function Chat() {
             />
 
             {isLoading ? (
-              <button className="min-w-fit rounded-r-lg bg-red-500 px-2 text-sm text-white" onClick={stop} type="button">
+              <button className="min-w-fit rounded-r-lg bg-red-500 px-2 text-sm text-white" type="button">
                 <AiOutlineLoading3Quarters className={"animate-spin text-xl"} />
               </button>
             ) : (
