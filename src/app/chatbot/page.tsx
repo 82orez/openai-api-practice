@@ -10,28 +10,44 @@ import axios from "axios";
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
 
-  // 마지막 메시지 추출
-  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
-  const lastText = lastMessage?.role === "assistant" ? lastMessage.content : "";
-
-  // 상태를 추가하여 lastText 업데이트 감지
+  // 상태 관리
   const [processedText, setProcessedText] = useState("");
+  const [audioSrc, setAudioSrc] = useState<string | null>(null);
 
+  // 메시지 응답 완료 후 TTS 요청 보내기
   useEffect(() => {
-    if (lastText && lastText !== processedText) {
-      setProcessedText(lastText);
-      sendTextToServer(lastText);
-    }
-  }, [lastText]);
+    if (!isLoading && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
 
+      // assistant의 마지막 메시지 처리
+      if (lastMessage.role === "assistant" && lastMessage.content !== processedText) {
+        setProcessedText(lastMessage.content);
+        sendTextToServer(lastMessage.content);
+      }
+    }
+  }, [messages, isLoading]);
+
+  // TTS 요청을 보내고 오디오 재생 경로 설정
   const sendTextToServer = async (text: string) => {
     try {
       await axios.post("/api/tts", { text });
       console.log("TTS request sent successfully");
+
+      // 캐시 방지를 위해 타임스탬프 추가
+      const timestamp = new Date().getTime();
+      setAudioSrc(`/tts/tts.mp3?timestamp=${timestamp}`);
     } catch (error) {
       console.error("Error sending TTS request", error);
     }
   };
+
+  // 오디오 자동 재생
+  useEffect(() => {
+    if (audioSrc) {
+      const audio = new Audio(audioSrc);
+      audio.play().catch((error) => console.error("Audio play failed:", error));
+    }
+  }, [audioSrc]);
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-between">
@@ -54,10 +70,18 @@ export default function Chat() {
           </div>
 
           {/* 마지막 응답 텍스트 출력 */}
-          {lastText && (
+          {processedText && (
             <div className="mt-2 rounded-lg bg-green-200 p-2 text-center">
-              <strong>Last Response:</strong> {lastText}
+              <strong>Last Response:</strong> {processedText}
             </div>
+          )}
+
+          {/* 오디오 컨트롤 (수동 재생 가능) */}
+          {audioSrc && (
+            <audio controls className="mt-4 w-full">
+              <source src={audioSrc} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
           )}
 
           <form className="mt-4 flex w-full" onSubmit={handleSubmit}>
