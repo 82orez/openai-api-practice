@@ -4,13 +4,34 @@ import { useChat } from "ai/react";
 import Link from "next/link";
 import { IoMdSend } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
 
-  // * 마지막 메시지 추출
+  // 마지막 메시지 추출
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
   const lastText = lastMessage?.role === "assistant" ? lastMessage.content : "";
+
+  // 상태를 추가하여 lastText 업데이트 감지
+  const [processedText, setProcessedText] = useState("");
+
+  useEffect(() => {
+    if (lastText && lastText !== processedText) {
+      setProcessedText(lastText);
+      sendTextToServer(lastText);
+    }
+  }, [lastText]);
+
+  const sendTextToServer = async (text: string) => {
+    try {
+      await axios.post("/api/tts", { text });
+      console.log("TTS request sent successfully");
+    } catch (error) {
+      console.error("Error sending TTS request", error);
+    }
+  };
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-between">
@@ -18,7 +39,6 @@ export default function Chat() {
         To the Home!
       </Link>
 
-      {/* h-full 또는 h-screen 으로 높이 조절 */}
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
           <div className="overflow-y-auto">
