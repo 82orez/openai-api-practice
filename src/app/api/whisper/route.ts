@@ -9,12 +9,16 @@ const openai = new OpenAI({
 
 // * GET 요청으로 처리하는 부분.
 export async function GET(request: Request) {
-  const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream("./public/recordings/recording.mp3"),
-    model: "whisper-1",
-  });
+  try {
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream("./public/recordings/recording.mp3"),
+      model: "whisper-1",
+    });
 
-  console.log(transcription.text);
+    console.log(transcription.text);
 
-  return NextResponse.json(transcription.text);
+    return NextResponse.json(transcription.text);
+  } catch (error) {
+    return NextResponse.json({ error: "File record failed" }, { status: 500 });
+  }
 }

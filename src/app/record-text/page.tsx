@@ -48,10 +48,15 @@ const AudioRecorder = () => {
   };
 
   const requestToWhisperServer = async () => {
-    const res = await axios("/api/whisper", {});
-    const result = await res.data;
-    setText(result);
-    return;
+    try {
+      const res = await axios("/api/whisper", {});
+      const result = await res.data;
+      setText(result);
+      return;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("An error occurred while making the text.");
+    }
   };
 
   return (
@@ -84,15 +89,6 @@ const AudioRecorder = () => {
           className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
           Save Recording to Server(서버에 저장하기)
         </button>
-      )}
-
-      {uploadedURL && (
-        <div className="mt-4 text-center">
-          <p className="text-green-600">File saved successfully!</p>
-          <a href={uploadedURL} download className="text-blue-500 underline">
-            Download from Server
-          </a>
-        </div>
       )}
 
       <div>{text}</div>
