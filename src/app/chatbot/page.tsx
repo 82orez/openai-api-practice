@@ -13,13 +13,14 @@ export default function Chat() {
   // 상태 관리
   const [processedText, setProcessedText] = useState("");
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [audioKey, setAudioKey] = useState<number>(0);
 
   // 메시지 응답 완료 후 TTS 요청 보내기
   useEffect(() => {
     if (!isLoading && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
 
-      // assistant의 마지막 메시지 처리
+      // 마지막 메시지가 assistant의 응답이고 아직 처리되지 않았다면 실행
       if (lastMessage.role === "assistant" && lastMessage.content !== processedText) {
         setProcessedText(lastMessage.content);
         sendTextToServer(lastMessage.content);
@@ -36,6 +37,7 @@ export default function Chat() {
       // 캐시 방지를 위해 타임스탬프 추가
       const timestamp = new Date().getTime();
       setAudioSrc(`/tts/tts.mp3?timestamp=${timestamp}`);
+      setAudioKey(timestamp);
     } catch (error) {
       console.error("Error sending TTS request", error);
     }
@@ -45,7 +47,9 @@ export default function Chat() {
   useEffect(() => {
     if (audioSrc) {
       const audio = new Audio(audioSrc);
-      audio.play().catch((error) => console.error("Audio play failed:", error));
+      audio.addEventListener("canplaythrough", () => {
+        audio.play().catch((error) => console.error("Audio play failed:", error));
+      });
     }
   }, [audioSrc]);
 
@@ -78,7 +82,7 @@ export default function Chat() {
 
           {/* 오디오 컨트롤 (수동 재생 가능) */}
           {audioSrc && (
-            <audio controls className="mt-4 w-full">
+            <audio key={audioKey} controls className="mt-4 w-full">
               <source src={audioSrc} type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
