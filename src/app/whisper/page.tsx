@@ -26,7 +26,9 @@ export default function WhisperPage() {
       <div className={clsx("border-2", { block: text.length > 0, hidden: !text })}>{text}</div>
       {/*<div>{text}</div>*/}
 
-      <Link href={"/"}>To Home!</Link>
+      <Link href={"/"} className="text-blue-500 hover:underline">
+        To Home!
+      </Link>
     </div>
   );
 }

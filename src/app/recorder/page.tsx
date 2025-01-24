@@ -47,10 +47,6 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <Link href={"/"} className="fixed right-5 top-5 rounded-md bg-pink-300 p-4">
-        To the Home!
-      </Link>
-
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
         className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}>
@@ -80,6 +76,10 @@ const AudioRecorder = () => {
           </a>
         </div>
       )}
+
+      <Link href={"/"} className="mt-10 text-blue-500 hover:underline">
+        To Home!
+      </Link>
     </div>
   );
 };

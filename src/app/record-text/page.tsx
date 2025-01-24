@@ -87,7 +87,7 @@ const AudioRecorder = () => {
             const requestWhisperServer = await requestToWhisperServer();
           }}
           className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
-          Save Recording to Server(서버에 저장하기)
+          Save Recording to Server(서버에 저장하고 텍스트 생성하기)
         </button>
       )}
 

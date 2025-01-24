@@ -41,7 +41,7 @@ export default function TTSPage() {
     <div className={"flex flex-col justify-center gap-5"}>
       <div>TTS Page - 텍스트를 오디오 파일로 만들기!</div>
 
-      <div className={"border-2 p-4"}>
+      <div className={"p-4"}>
         <textarea
           className="h-32 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="텍스트를 입력하세요..."
