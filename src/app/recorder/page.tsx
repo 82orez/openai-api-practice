@@ -47,6 +47,7 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
+      <p>녹음한 파일을 다운 및 업로드하기</p>
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
         className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}>

@@ -61,9 +61,7 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      {/*<Link href={"/"} className="fixed right-5 top-5 rounded-md bg-pink-300 p-4">*/}
-      {/*  To the Home!*/}
-      {/*</Link>*/}
+      <p>음성 녹음 후에 정지 시 바로 텍스트 추출하기</p>
 
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
