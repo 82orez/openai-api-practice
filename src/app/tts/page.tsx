@@ -39,7 +39,7 @@ export default function TTSPage() {
 
   return (
     <div className={"flex flex-col justify-center gap-5"}>
-      <div>TTS Page - 텍스트를 오디오 파일로 만들기!</div>
+      <div>TTS Page - 영어 Text 를 원어민 음성 파일로 만들기!</div>
 
       <div className={"p-4"}>
         <textarea

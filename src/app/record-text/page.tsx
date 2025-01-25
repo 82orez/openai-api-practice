@@ -10,62 +10,60 @@ const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [text, setText] = useState("");
 
   const handleStopRecording = async () => {
-    const audioBlob = await stopRecording();
-    if (audioBlob) {
-      const audioURL = URL.createObjectURL(audioBlob);
-      setAudioURL(audioURL);
-      console.log("Audio URL: ", audioURL);
-    }
-  };
-
-  const handleSaveRecordingToServer = async () => {
-    if (!audioURL) return;
+    setIsLoading(true); // 로딩 상태 시작
 
     try {
-      const response = await fetch(audioURL);
-      const audioBlob = await response.blob();
-      const formData = new FormData();
-      formData.append("audio", new File([audioBlob], "recording.mp3"));
+      // 녹음 중지 및 오디오 데이터 얻기
+      const audioBlob = await stopRecording();
+      if (audioBlob) {
+        const audioURL = URL.createObjectURL(audioBlob);
+        setAudioURL(audioURL);
+        console.log("Audio URL:", audioURL);
 
-      const uploadResponse = await fetch("/api/recordings", {
-        method: "POST",
-        body: formData,
-      });
+        // 파일 업로드
+        const response = await fetch(audioURL);
+        const audioBlobFetched = await response.blob();
+        const formData = new FormData();
+        formData.append("audio", new File([audioBlobFetched], "recording.mp3"));
 
-      const result = await uploadResponse.json();
-      if (result.url) {
-        setUploadedURL(result.url);
-      } else {
-        alert("Failed to record file");
+        const uploadResponse = await fetch("/api/recordings", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await uploadResponse.json();
+        if (result.url) {
+          setUploadedURL(result.url);
+
+          // 절대 경로로 변환하여 Whisper API 요청
+          const absoluteUrl = new URL(result.url, window.location.origin).href;
+
+          const whisperResponse = await axios.post("/api/whisper", {
+            audioUrl: absoluteUrl, // 절대 URL로 변환하여 전달
+          });
+
+          setText(whisperResponse.data.text || "No text extracted.");
+        } else {
+          alert("Failed to upload recording.");
+        }
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("An error occurred while saving the recording.");
-    }
-  };
-
-  const requestToWhisperServer = async () => {
-    try {
-      const res = await axios("/api/whisper", {});
-      const result = await res.data;
-      setText(result);
-      return;
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("An error occurred while making the text.");
+      console.error("Error processing audio:", error);
+      alert("An error occurred while processing the recording.");
+    } finally {
+      setIsLoading(false); // 로딩 상태 종료
     }
   };
 
   return (
     <div className="flex flex-col items-center p-4">
-      <Link href={"/"} className="fixed right-5 top-5 rounded-md bg-pink-300 p-4">
-        To the Home!
-      </Link>
+      {/*<Link href={"/"} className="fixed right-5 top-5 rounded-md bg-pink-300 p-4">*/}
+      {/*  To the Home!*/}
+      {/*</Link>*/}
 
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
@@ -82,20 +80,11 @@ const AudioRecorder = () => {
         </div>
       )}
 
-      {audioURL && (
-        <button
-          onClick={async () => {
-            setIsLoading(true);
-            const audioBlob = await handleSaveRecordingToServer();
-            const requestWhisperServer = await requestToWhisperServer();
-            setIsLoading(false);
-          }}
-          className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
-          Save Recording to Server(서버에 저장하고 텍스트 생성하기)
-        </button>
-      )}
+      <div className="mt-10">{isLoading ? <AiOutlineLoading3Quarters className={"animate-spin text-xl"} /> : <div>{text}</div>}</div>
 
-      <div className={"mt-10"}>{isLoading ? <AiOutlineLoading3Quarters className={"animate-spin text-xl"} /> : <div>{text}</div>}</div>
+      <Link href={"/"} className="text-blue-500 hover:underline">
+        To Home!
+      </Link>
     </div>
   );
 };
