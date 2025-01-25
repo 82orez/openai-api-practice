@@ -1,36 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OpenAI } from "openai";
-import fs from "fs";
-import path from "path";
+// import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
-    // OpenAI API 설정
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!, // 환경 변수에서 API 키 로드
-    });
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+    const supabase = await createClient();
 
     const { text } = await req.json();
 
-    // OpenAI API 호출
+    // TTS 생성
     const response = await openai.audio.speech.create({
-      model: "tts-1", // 사용할 TTS 모델 (필요 시 최신 모델로 변경)
+      model: "tts-1",
       input: text,
-      voice: "alloy", // 음성 종류 (alloy, echo, fable, onyx, nova, and shimmer)
+      voice: "alloy",
       response_format: "mp3",
     });
 
-    // 파일 저장 경로 설정
-    const outputPath = path.join(process.cwd(), "public/tts", "tts.mp3");
+    // Supabase 스토리지 클라이언트 설정
+    // const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
-    // 응답 스트림을 파일로 저장
-    const buffer = Buffer.from(await response.arrayBuffer());
-    fs.writeFileSync(outputPath, buffer);
+    // mp3 파일을 Supabase Storage 에 업로드
+    const fileName = `tts-${Date.now()}.mp3`;
+    const { data, error } = await supabase.storage.from("tts-audio").upload(fileName, Buffer.from(await response.arrayBuffer()), {
+      contentType: "audio/mpeg",
+      upsert: true,
+    });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabase.storage.from("tts-audio").getPublicUrl(fileName);
 
     return NextResponse.json({
       success: true,
       message: "Audio file created successfully!",
-      fileUrl: "/tts/tts.mp3",
+      fileUrl: publicUrlData.publicUrl,
     });
   } catch (error) {
     console.error("TTS Error:", error);
