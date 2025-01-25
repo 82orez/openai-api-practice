@@ -19,11 +19,11 @@ const AudioRecorder = () => {
     if (audioBlob) {
       const audioURL = URL.createObjectURL(audioBlob);
       setAudioURL(audioURL);
-      console.log("Audio URL:", audioURL);
+      console.log("Audio URL: ", audioURL);
     }
   };
 
-  const handleSaveRecording = async () => {
+  const handleSaveRecordingToServer = async () => {
     if (!audioURL) return;
 
     try {
@@ -86,7 +86,7 @@ const AudioRecorder = () => {
         <button
           onClick={async () => {
             setIsLoading(true);
-            const audioBlob = await handleSaveRecording();
+            const audioBlob = await handleSaveRecordingToServer();
             const requestWhisperServer = await requestToWhisperServer();
             setIsLoading(false);
           }}
