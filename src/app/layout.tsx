@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import { NextLayout } from "@/app/providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Noto_Sans_KR({
+  weight: ["400", "600", "900"],
+  style: "normal",
+  display: "swap",
   subsets: ["latin"],
 });
 
@@ -24,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased`}>
+        <NextLayout>{children}</NextLayout>
+      </body>
     </html>
   );
 }
