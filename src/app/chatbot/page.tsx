@@ -1,23 +1,67 @@
 "use client";
 
 import { useChat } from "ai/react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { IoMdSend } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
-  console.log("Input:", input);
-  console.log("Messages:", messages);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [isProcessingAudio, setIsProcessingAudio] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
 
   // 마지막 메시지 추출
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
   const lastText = lastMessage?.role === "assistant" ? lastMessage.content : "";
 
+  // 메시지 준비 상태 확인 후 TTS 호출
+  useEffect(() => {
+    if (lastText && !isLoading) {
+      // 메시지가 완전히 처리된 후 TTS 생성
+      setPendingMessage(lastText);
+    }
+  }, [lastText, isLoading]);
+
+  // pendingMessage 상태를 모니터링하여 TTS 요청
+  useEffect(() => {
+    if (pendingMessage) {
+      const timer = setTimeout(() => {
+        generateAudio(pendingMessage);
+        setPendingMessage(null); // 요청 후 메시지 상태 초기화
+      }, 500); // 0.5초 지연 후 실행
+
+      return () => clearTimeout(timer); // 컴포넌트 재렌더링 시 클린업
+    }
+  }, [pendingMessage]);
+
+  // TTS 오디오 생성 및 Supabase 업로드 처리
+  const generateAudio = async (text: string) => {
+    setIsProcessingAudio(true);
+    try {
+      const response = await fetch("/api/tts-chatbot", {
+        method: "POST",
+        body: JSON.stringify({ text }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+      if (result.audioUrl) {
+        setAudioURL(result.audioUrl);
+      } else {
+        console.error("Failed to generate audio");
+      }
+    } catch (error) {
+      console.error("Error generating audio:", error);
+    } finally {
+      setIsProcessingAudio(false);
+    }
+  };
+
   return (
-    // h-full 또는 h-screen 으로 높이 조절
     <div className="flex h-full w-full flex-col items-center justify-between">
-      <div className={"fixed right-8 top-20 rounded-md bg-pink-300 p-4"}>Upgraded Chatbot!</div>
+      <div className="fixed right-8 top-20 rounded-md bg-pink-300 p-4">Upgraded Chatbot!</div>
 
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
@@ -33,10 +77,20 @@ export default function Chat() {
             ))}
           </div>
 
-          {/* 마지막 응답 텍스트 출력 */}
           {lastText && (
             <div className="mt-2 rounded-lg bg-green-200 p-2 text-center">
               <strong>Last Response:</strong> {lastText}
+            </div>
+          )}
+
+          {isProcessingAudio && <p className="mt-2 text-gray-500">Generating audio...</p>}
+
+          {audioURL && (
+            <div className="mt-4">
+              <audio controls autoPlay>
+                <source src={audioURL} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
             </div>
           )}
 
