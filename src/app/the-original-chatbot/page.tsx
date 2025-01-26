@@ -7,6 +7,8 @@ import { IoMdSend } from "react-icons/io";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/openai" });
+  console.log("Input:", input);
+  console.log("Messages:", messages);
 
   return (
     // h-full 또는 h-screen 으로 높이 조절
