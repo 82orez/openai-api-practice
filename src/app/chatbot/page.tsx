@@ -19,7 +19,6 @@ export default function Chat() {
   // 메시지 준비 상태 확인 후 TTS 호출
   useEffect(() => {
     if (lastText && !isLoading) {
-      // 메시지가 완전히 처리된 후 TTS 생성
       setPendingMessage(lastText);
     }
   }, [lastText, isLoading]);
@@ -29,16 +28,18 @@ export default function Chat() {
     if (pendingMessage) {
       const timer = setTimeout(() => {
         generateAudio(pendingMessage);
-        setPendingMessage(null); // 요청 후 메시지 상태 초기화
+        setPendingMessage(null);
       }, 500); // 0.5초 지연 후 실행
 
-      return () => clearTimeout(timer); // 컴포넌트 재렌더링 시 클린업
+      return () => clearTimeout(timer);
     }
   }, [pendingMessage]);
 
   // TTS 오디오 생성 및 Supabase 업로드 처리
   const generateAudio = async (text: string) => {
     setIsProcessingAudio(true);
+    setAudioURL(null); // 이전 오디오를 초기화
+
     try {
       const response = await fetch("/api/tts-chatbot", {
         method: "POST",
@@ -58,6 +59,14 @@ export default function Chat() {
       setIsProcessingAudio(false);
     }
   };
+
+  // 오디오가 변경될 때마다 자동 재생
+  useEffect(() => {
+    if (audioURL) {
+      const audioElement = new Audio(audioURL);
+      audioElement.play().catch((err) => console.error("Audio play failed:", err));
+    }
+  }, [audioURL]);
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-between">
