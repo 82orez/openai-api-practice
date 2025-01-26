@@ -32,7 +32,7 @@ export default function Sidebar() {
         기본 Chat-Bot
       </Link>
 
-      <Link href={"/chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/upgraded-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Upgraded Chat-Bot
       </Link>
 
