@@ -20,7 +20,7 @@ export default function Chat() {
     if (!isLoading && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
 
-      // 마지막 메시지가 assistant의 응답이고 아직 처리되지 않았다면 실행
+      // 마지막 메시지가 assistant 의 응답이고 아직 처리되지 않았다면 실행
       if (lastMessage.role === "assistant" && lastMessage.content !== processedText) {
         setProcessedText(lastMessage.content);
         sendTextToServer(lastMessage.content);
@@ -54,11 +54,7 @@ export default function Chat() {
   }, [audioSrc]);
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-between">
-      <Link href={"/"} className={"fixed right-5 top-5 rounded-md bg-pink-300 p-4"}>
-        To the Home!
-      </Link>
-
+    <div className="flex h-full w-full flex-col items-center justify-between">
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
           <div className="overflow-y-auto">
