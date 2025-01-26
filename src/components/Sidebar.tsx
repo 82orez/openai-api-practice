@@ -16,9 +16,19 @@ export default function Sidebar() {
       <Link href={"/"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Home
       </Link>
+
       <Link href={"/tts"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         TTS
       </Link>
+
+      <Link href={"/recorder"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        기본 Recorder
+      </Link>
+
+      <Link href={"/the-original-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        기본 Chat-Bot
+      </Link>
+
       <Link href={"/"} onClick={toggle} className={"hover:underline"}>
         카테고리
       </Link>

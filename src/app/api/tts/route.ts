@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
     const { text } = await req.json();
 
-    // TTS 생성
+    // * TTS 생성
     const response = await openai.audio.speech.create({
       model: "tts-1",
       input: text,
@@ -18,18 +18,18 @@ export async function POST(req: NextRequest) {
       response_format: "mp3",
     });
 
-    // Supabase 스토리지 클라이언트 설정
-    // const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-
-    // mp3 파일을 Supabase Storage 에 업로드
+    // * mp3 파일을 Supabase Storage 에 업로드
     const fileName = `tts-${Date.now()}.mp3`;
     const { data, error } = await supabase.storage.from("tts-audio").upload(fileName, Buffer.from(await response.arrayBuffer()), {
       contentType: "audio/mpeg",
       upsert: true,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error(error.message);
+    }
 
+    // * supabase 에 업로드된 음성 파일의 공개 url 가져오기
     const { data: publicUrlData } = supabase.storage.from("tts-audio").getPublicUrl(fileName);
 
     return NextResponse.json({

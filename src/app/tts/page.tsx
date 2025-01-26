@@ -39,12 +39,12 @@ export default function TTSPage() {
 
   return (
     <div className={"flex flex-col justify-center gap-5"}>
-      <div>TTS Page - 영어 Text 를 원어민 음성 파일로 만들기!</div>
+      <div>TTS 기능 맛보기 - 영어 Text 를 입력해 주시면 원어민 음성 파일로 만들어 드립니다.!</div>
 
       <div className={"p-4"}>
         <textarea
           className="h-32 w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="텍스트를 입력하세요..."
+          placeholder="영어 문장을 입력하세요."
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
