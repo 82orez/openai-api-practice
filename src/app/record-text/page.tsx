@@ -63,7 +63,8 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <p>녹음한 파일을 다운 및 업로드하고 텍스트 변환</p>
+      <p className={"mb-8"}>녹음한 파일을 다운 및 업로드하고 텍스트 변환</p>
+
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
         className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}
@@ -73,28 +74,10 @@ const AudioRecorder = () => {
 
       {isProcessing && <p className="mt-4 text-gray-600">Processing...</p>}
 
-      {audioURL && (
-        <div className="mt-4">
-          <audio controls src={audioURL} className="mx-auto" />
-          <a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">
-            Download Recording(내 컴퓨터/휴대폰에 저장하기)
-          </a>
-        </div>
-      )}
-
-      {uploadedURL && (
-        <div className="mt-4 text-center">
-          <p className="text-green-600">File saved successfully!</p>
-          <a href={uploadedURL} download className="text-blue-500 underline">
-            Download from Server
-          </a>
-        </div>
-      )}
-
       {transcription && (
         <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">
-          <h3 className="text-lg font-bold">Transcription:</h3>
-          <p className="text-gray-800">{transcription}</p>
+          {/*<h3 className="">Transcription:</h3>*/}
+          <p className="text-center text-xl text-gray-800">{transcription}</p>
         </div>
       )}
 
