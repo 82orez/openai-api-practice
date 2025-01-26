@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient();
+
     const formData = await req.formData();
     const audioFile = formData.get("audio") as File;
 
@@ -13,23 +14,28 @@ export async function POST(req: NextRequest) {
 
     // 파일을 버퍼로 변환
     const buffer = Buffer.from(await audioFile.arrayBuffer());
+    const fileName = `recording-${Date.now()}.mp3`;
 
-    // 파일 저장 경로 지정 (./public/recordings 폴더에 저장)
-    const filePath = path.join(process.cwd(), "public", "recordings", audioFile.name);
+    // Supabase Storage 에 파일 업로드
+    const { data, error } = await supabase.storage.from("recordings").upload(fileName, buffer, {
+      contentType: "audio/mpeg",
+      upsert: true,
+    });
 
-    // 폴더가 없으면 생성
-    if (!fs.existsSync(path.dirname(filePath))) {
-      fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    if (error) {
+      console.error("Upload Error:", error.message);
+      return NextResponse.json({ error: "File upload failed" }, { status: 500 });
     }
 
-    // 파일 저장
-    fs.writeFileSync(filePath, buffer);
+    // 업로드된 파일의 URL 가져오기
+    const { data: publicUrlData } = supabase.storage.from("recordings").getPublicUrl(fileName);
 
     return NextResponse.json({
       message: "File uploaded successfully",
-      url: `/recordings/${audioFile.name}`,
+      url: publicUrlData.publicUrl,
     });
   } catch (error) {
-    return NextResponse.json({ error: "File record failed" }, { status: 500 });
+    console.error("File Upload Error:", error);
+    return NextResponse.json({ error: "File upload failed" }, { status: 500 });
   }
 }

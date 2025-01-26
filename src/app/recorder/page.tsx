@@ -27,6 +27,7 @@ const AudioRecorder = () => {
       const formData = new FormData();
       formData.append("audio", new File([audioBlob], "recording.mp3"));
 
+      // Supabase 업로드 요청
       const uploadResponse = await fetch("/api/recordings", {
         method: "POST",
         body: formData,
@@ -35,9 +36,10 @@ const AudioRecorder = () => {
       const result = await uploadResponse.json();
       if (result.url) {
         setUploadedURL(result.url);
-        alert(`File saved at: ${result.url}`);
+        console.log(`File saved at: ${result.url}`);
+        alert("Successfully uploaded audio.");
       } else {
-        alert("Failed to record file");
+        alert("Failed to save file");
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -56,7 +58,7 @@ const AudioRecorder = () => {
 
       {audioURL && (
         <div className="mt-4">
-          <audio controls src={audioURL} className={`${isRecording ? "pointer-events-none bg-red-500 opacity-50" : "bg-blue-500"} mx-auto`} />
+          <audio controls src={audioURL} className="mx-auto" />
           <a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">
             Download Recording(내 컴퓨터/휴대폰에 저장하기)
           </a>
@@ -72,7 +74,7 @@ const AudioRecorder = () => {
       {uploadedURL && (
         <div className="mt-4 text-center">
           <p className="text-green-600">File saved successfully!</p>
-          <a href={uploadedURL} download className="text-blue-500 underline">
+          <a href={uploadedURL} target={"_blank"} download className="text-blue-500 underline">
             Download from Server
           </a>
         </div>
