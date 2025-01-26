@@ -6,7 +6,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
 
 export default function Chat() {
-  const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/openai" });
+  const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
   console.log("Input:", input);
   console.log("Messages:", messages);
 

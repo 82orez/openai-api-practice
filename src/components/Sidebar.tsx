@@ -28,7 +28,7 @@ export default function Sidebar() {
         Recorder to Text
       </Link>
 
-      <Link href={"/the-original-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         기본 Chat-Bot
       </Link>
 
