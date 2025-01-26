@@ -9,54 +9,55 @@ const AudioRecorder = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleStopRecording = async () => {
+    setIsProcessing(true);
+
     const audioBlob = await stopRecording();
     if (audioBlob) {
       const audioURL = URL.createObjectURL(audioBlob);
       setAudioURL(audioURL);
       console.log("Audio URL:", audioURL);
-    }
-  };
 
-  const handleSaveAndTranscribe = async () => {
-    if (!audioURL) return;
+      try {
+        const response = await fetch(audioURL);
+        const audioBlob = await response.blob();
+        const formData = new FormData();
+        formData.append("audio", new File([audioBlob], "recording.mp3"));
 
-    try {
-      const response = await fetch(audioURL);
-      const audioBlob = await response.blob();
-      const formData = new FormData();
-      formData.append("audio", new File([audioBlob], "recording.mp3"));
-
-      const uploadResponse = await fetch("/api/recordings", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await uploadResponse.json();
-      if (result.url) {
-        setUploadedURL(result.url);
-        alert(`File saved at: ${result.url}`);
-
-        // Whisper API 호출
-        const transcriptResponse = await fetch("/api/transcribe", {
+        // 서버에 오디오 업로드 및 텍스트 변환 요청
+        const uploadResponse = await fetch("/api/recordings", {
           method: "POST",
-          body: JSON.stringify({ fileUrl: result.url }),
-          headers: { "Content-Type": "application/json" },
+          body: formData,
         });
 
-        const transcriptResult = await transcriptResponse.json();
-        if (transcriptResult.text) {
-          setTranscription(transcriptResult.text);
+        const result = await uploadResponse.json();
+        if (result.url) {
+          setUploadedURL(result.url);
+
+          // Supabase에 업로드된 파일에서 Whisper API로 텍스트 추출
+          const transcriptResponse = await fetch("/api/transcribe", {
+            method: "POST",
+            body: JSON.stringify({ fileUrl: result.url }),
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const transcriptResult = await transcriptResponse.json();
+          if (transcriptResult.text) {
+            setTranscription(transcriptResult.text);
+          } else {
+            alert("Failed to transcribe audio.");
+          }
         } else {
-          alert("Failed to transcribe audio.");
+          alert("Failed to save file.");
         }
-      } else {
-        alert("Failed to save file.");
+      } catch (error) {
+        console.error("Error processing file:", error);
+        alert("An error occurred while processing the recording.");
+      } finally {
+        setIsProcessing(false);
       }
-    } catch (error) {
-      console.error("Error uploading/transcribing file:", error);
-      alert("An error occurred while processing the recording.");
     }
   };
 
@@ -65,9 +66,12 @@ const AudioRecorder = () => {
       <p>녹음한 파일을 다운 및 업로드하고 텍스트 변환</p>
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
-        className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}>
+        className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}
+        disabled={isProcessing}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
+
+      {isProcessing && <p className="mt-4 text-gray-600">Processing...</p>}
 
       {audioURL && (
         <div className="mt-4">
@@ -76,12 +80,6 @@ const AudioRecorder = () => {
             Download Recording(내 컴퓨터/휴대폰에 저장하기)
           </a>
         </div>
-      )}
-
-      {audioURL && (
-        <button onClick={handleSaveAndTranscribe} className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
-          Save & Transcribe(서버에 저장 및 변환)
-        </button>
       )}
 
       {uploadedURL && (
@@ -94,9 +92,9 @@ const AudioRecorder = () => {
       )}
 
       {transcription && (
-        <div className="mt-4 rounded border bg-gray-100 p-4">
+        <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">
           <h3 className="text-lg font-bold">Transcription:</h3>
-          <p>{transcription}</p>
+          <p className="text-gray-800">{transcription}</p>
         </div>
       )}
 
