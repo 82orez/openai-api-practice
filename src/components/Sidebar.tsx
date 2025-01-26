@@ -13,7 +13,7 @@ export default function Sidebar() {
       <button className={"absolute right-5 top-5 text-3xl lg:hidden"} onClick={toggle} data-cy={"sidebarClose"}>
         <AiOutlineClose />
       </button>
-      <Link href={"/"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/"} className="w-48 text-xl font-bold text-gray-600 hover:underline" onClick={toggle}>
         Home
       </Link>
 
@@ -36,14 +36,14 @@ export default function Sidebar() {
         Upgraded Chat-Bot
       </Link>
 
-      <Link href={"/"} onClick={toggle} className={"hover:underline"}>
-        카테고리
-      </Link>
+      {/*<Link href={"/"} onClick={toggle} className={"hover:underline"}>*/}
+      {/*  카테고리*/}
+      {/*</Link>*/}
 
-      <div className="mt-10 flex items-center gap-4">
-        <IconButton Icon={AiFillInstagram} component={Link} label="instagramLink" href="https://www.instagram.com/dhoonjang" target="_blank" />
-        <IconButton Icon={AiFillGithub} component={Link} label="githubLink" href="https://www.github.com/dhoonjang" target="_blank" />
-      </div>
+      {/*<div className="mt-10 flex items-center gap-4">*/}
+      {/*  <IconButton Icon={AiFillInstagram} component={Link} label="instagramLink" href="https://www.instagram.com/dhoonjang" target="_blank" />*/}
+      {/*  <IconButton Icon={AiFillGithub} component={Link} label="githubLink" href="https://www.github.com/dhoonjang" target="_blank" />*/}
+      {/*</div>*/}
     </div>
   );
 }
