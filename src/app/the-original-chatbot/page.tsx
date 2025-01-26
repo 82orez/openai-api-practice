@@ -11,6 +11,8 @@ export default function Chat() {
   return (
     // h-full 또는 h-screen 으로 높이 조절
     <div className="flex h-full w-full flex-col items-center justify-between">
+      <div className={"fixed right-8 top-20 rounded-md bg-green-200 p-4"}>기본 Chatbot!</div>
+
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
           <div className="overflow-y-auto">

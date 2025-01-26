@@ -4,57 +4,21 @@ import { useChat } from "ai/react";
 import Link from "next/link";
 import { IoMdSend } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
+  console.log("Input:", input);
+  console.log("Messages:", messages);
 
-  // 상태 관리
-  const [processedText, setProcessedText] = useState("");
-  const [audioSrc, setAudioSrc] = useState<string | null>(null);
-  const [audioKey, setAudioKey] = useState<number>(0);
-
-  // 메시지 응답 완료 후 TTS 요청 보내기
-  useEffect(() => {
-    if (!isLoading && messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-
-      // 마지막 메시지가 assistant 의 응답이고 아직 처리되지 않았다면 실행
-      if (lastMessage.role === "assistant" && lastMessage.content !== processedText) {
-        setProcessedText(lastMessage.content);
-        sendTextToServer(lastMessage.content);
-      }
-    }
-  }, [messages, isLoading]);
-
-  // TTS 요청을 보내고 오디오 재생 경로 설정
-  const sendTextToServer = async (text: string) => {
-    try {
-      await axios.post("/api/tts", { text });
-      console.log("TTS request sent successfully");
-
-      // 캐시 방지를 위해 타임스탬프 추가
-      const timestamp = new Date().getTime();
-      setAudioSrc(`/tts/tts.mp3?timestamp=${timestamp}`);
-      setAudioKey(timestamp);
-    } catch (error) {
-      console.error("Error sending TTS request", error);
-    }
-  };
-
-  // 오디오 자동 재생
-  useEffect(() => {
-    if (audioSrc) {
-      const audio = new Audio(audioSrc);
-      audio.addEventListener("canplaythrough", () => {
-        audio.play().catch((error) => console.error("Audio play failed:", error));
-      });
-    }
-  }, [audioSrc]);
+  // 마지막 메시지 추출
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const lastText = lastMessage?.role === "assistant" ? lastMessage.content : "";
 
   return (
+    // h-full 또는 h-screen 으로 높이 조절
     <div className="flex h-full w-full flex-col items-center justify-between">
+      <div className={"fixed right-8 top-20 rounded-md bg-pink-300 p-4"}>Upgraded Chatbot!</div>
+
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
           <div className="overflow-y-auto">
@@ -70,18 +34,10 @@ export default function Chat() {
           </div>
 
           {/* 마지막 응답 텍스트 출력 */}
-          {processedText && (
+          {lastText && (
             <div className="mt-2 rounded-lg bg-green-200 p-2 text-center">
-              <strong>Last Response:</strong> {processedText}
+              <strong>Last Response:</strong> {lastText}
             </div>
-          )}
-
-          {/* 오디오 컨트롤 (수동 재생 가능) */}
-          {audioSrc && (
-            <audio key={audioKey} controls className="mt-4 w-full">
-              <source src={audioSrc} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
           )}
 
           <form className="mt-4 flex w-full" onSubmit={handleSubmit}>
