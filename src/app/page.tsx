@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className={"flex flex-col gap-5"}>
-      <div>openai-api-practice Home</div>
+      <h1 className={"text-2xl font-semibold"}>OpenAI API 체험관에 오신 것을 환영합니다.</h1>
 
       <Link href={"/tts"}>Go to TTS! - 영어 Text 를 원어민 음성 파일로 만들기</Link>
       <Link href={"/recorder"}>Go to Recorder! - 녹음한 파일을 다운 및 업로드하기</Link>
