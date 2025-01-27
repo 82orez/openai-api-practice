@@ -36,6 +36,10 @@ export default function Sidebar() {
         Upgraded Chat-Bot
       </Link>
 
+      <Link href={"/audio-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        Audio Chat-Bot
+      </Link>
+
       {/*<Link href={"/"} onClick={toggle} className={"hover:underline"}>*/}
       {/*  카테고리*/}
       {/*</Link>*/}
