@@ -62,7 +62,7 @@ export default function Chat() {
     }
   };
 
-  // 오디오가 변경될 때마다 자동 재생
+  // 오디오가 변경될 때마다 자동 재생 -> echoing 방지를 위해 다음과 같이 수정.
   useEffect(() => {
     if (audioURL) {
       if (audioElement) {
