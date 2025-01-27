@@ -36,7 +36,7 @@ const AudioRecorder = () => {
         if (result.url) {
           setUploadedURL(result.url);
 
-          // Supabase에 업로드된 파일에서 Whisper API로 텍스트 추출
+          // Supabase 에 업로드된 파일에서 Whisper API 로 텍스트 추출
           const transcriptResponse = await fetch("/api/transcribe", {
             method: "POST",
             body: JSON.stringify({ fileUrl: result.url }),
