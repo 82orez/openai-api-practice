@@ -9,6 +9,10 @@ export default function AdminPage() {
 
   // 오래된 오디오 파일 삭제 요청
   const handleDeleteOldAudio = async () => {
+    if (!window.confirm("정말 오래된 오디오 파일을 삭제하시겠습니까?")) {
+      return;
+    }
+
     setLoading(true);
     setMessage("");
 

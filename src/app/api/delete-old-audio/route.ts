@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
       const fileDate = new Date(file.created_at);
       const diffMinutes = (now.getTime() - fileDate.getTime()) / (1000 * 60);
 
-      // * 원하는 시간 분단위로 설정 : 예)업로드된지 60분이 넘은 파일 삭제(1시간 이전 파일 삭제)
+      // ! 원하는 시간 분단위로 설정 : 예)업로드된지 60분이 넘은 파일 삭제(1시간 이전 파일 삭제)
       if (diffMinutes > 10) {
         filesToDelete.push(file.name);
       }
