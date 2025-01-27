@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-types": "npx supabase gen types typescript --project-id eawhezrqydtlptqwhmfm --schema public > src/types_db.ts"
+    "generate-types": "npx supabase gen types typescript --project-id zocgkdktcbgvuggkepvc --schema public > src/types_db.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.19",
