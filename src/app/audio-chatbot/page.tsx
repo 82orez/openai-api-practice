@@ -142,12 +142,12 @@ export default function Chat() {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-between">
-      <div className="fixed right-8 top-20 rounded-md bg-pink-300 p-4">Upgraded Chatbot!</div>
+      <div className="fixed right-8 top-20 rounded-md bg-amber-300 p-4">Audio Chatbot!</div>
 
       {/* 녹음 버튼 */}
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
-        className={`fixed right-8 top-48 rounded px-4 py-2 ${isRecording ? "animate-pulse bg-red-500" : "bg-blue-500"} text-white`}
+        className={`fixed right-8 top-44 rounded px-4 py-2 ${isRecording ? "animate-pulse bg-red-500" : "bg-blue-500"} text-white`}
         disabled={isProcessingRecording}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
