@@ -1,6 +1,6 @@
 {
   "crons": [{
     "path": "/api/delete-old-audio",
-    "schedule": "0 7 * * *"
+    "schedule": "0 1 * * *"
   }]
 }
