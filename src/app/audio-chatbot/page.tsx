@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "ai/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { IoMdSend } from "react-icons/io";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -12,6 +12,8 @@ export default function Chat() {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [isProcessingAudio, setIsProcessingAudio] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // 마지막 메시지 추출
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
@@ -61,12 +63,24 @@ export default function Chat() {
     }
   };
 
-  // 오디오가 변경될 때마다 자동 재생
+  // 오디오가 변경될 때마다 자동 재생 -> echoing 방지를 위해 다음과 같이 수정.
   useEffect(() => {
     if (audioURL) {
-      const audioElement = new Audio(audioURL);
-      audioElement.play().catch((err) => console.error("Audio play failed:", err));
+      if (audioElement) {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+      }
+      const newAudioElement = new Audio(audioURL);
+      newAudioElement.oncanplaythrough = () => {
+        newAudioElement.play().catch((err) => console.error("Audio play failed:", err));
+      };
+      setAudioElement(newAudioElement);
     }
+    return () => {
+      if (audioElement) {
+        audioElement.pause();
+      }
+    };
   }, [audioURL]);
 
   return (
@@ -97,7 +111,12 @@ export default function Chat() {
 
           {audioURL && (
             <div className="mt-4">
-              <audio controls autoPlay>
+              <audio
+                ref={(el) => {
+                  audioRef.current = el;
+                  if (el) setAudioElement(el);
+                }}
+                controls>
                 <source src={audioURL} type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
