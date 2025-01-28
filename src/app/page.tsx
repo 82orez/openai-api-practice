@@ -11,6 +11,7 @@ export default function Home() {
       <Link href={"/record-text"}>Go to Record To Text Page!</Link>
       <Link href={"/chatbot"}>Go to Chatbot!</Link>
       <Link href={"/audio-chatbot"}>Go to Audio Chatbot!</Link>
+      <Link href={"/chat-plus"}>Go to Chat Plus!</Link>
       <Link href={"/whisper"}>Go to Whisper! - 오디오 파일에서 text 추출하기</Link>
     </div>
   );

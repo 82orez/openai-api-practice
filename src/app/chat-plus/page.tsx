@@ -151,7 +151,7 @@ export default function Chat() {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-between">
-      <div className="fixed right-8 top-20 rounded-md bg-amber-300 p-4">Audio Chatbot!</div>
+      <div className="fixed right-8 top-20 rounded-md bg-fuchsia-600 p-4 text-white">Chat Plus!</div>
 
       {/* 녹음 버튼 */}
       <button
