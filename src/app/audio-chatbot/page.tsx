@@ -174,6 +174,17 @@ export default function Chat() {
             ))}
           </div>
 
+          {isProcessingAudio && <p className="mt-4 animate-pulse text-blue-500">Audio is being generated...</p>}
+
+          {audioURL && (
+            <div className="mt-4">
+              <audio controls>
+                <source src={audioURL} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
+
           <form className="mt-4 flex w-full" onSubmit={handleSubmit}>
             <input
               className="w-full rounded-l-lg border border-gray-300 p-2 focus:border-blue-300 focus:outline-none focus:ring"
