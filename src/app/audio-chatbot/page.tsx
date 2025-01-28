@@ -114,7 +114,7 @@ export default function Chat() {
 
         const result = await uploadResponse.json();
         if (result.url) {
-          // Whisper API로 텍스트 추출 요청
+          // Whisper API 로 텍스트 추출 요청
           const transcriptResponse = await fetch("/api/transcribe", {
             method: "POST",
             body: JSON.stringify({ fileUrl: result.url }),
