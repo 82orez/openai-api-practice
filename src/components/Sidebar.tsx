@@ -40,6 +40,10 @@ export default function Sidebar() {
         Audio Chat-Bot
       </Link>
 
+      <Link href={"/chat-plus"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        Chat plus
+      </Link>
+
       <Link href={"/admin"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Admin
       </Link>
