@@ -27,7 +27,7 @@ export default function Chat() {
     }
   }, [transcription, setInput]);
 
-  // handleSubmit 이 input 상태값이 변경될 때 자동으로 실행됩니다.
+  // * handleSubmit 함수가 input 의 상태값이 변경될 때 자동으로 실행됩니다.
   // 녹음을 멈춘 후 텍스트가 input 에 반영되면, 이 변경사항으로 인해 자동으로 handleSubmit 함수가 실행됩니다.
   // handleSubmit 함수는 form 제출 시(onSubmit) 실행되는 함수이므로, new Event("submit")을 전달하여 호출합니다.
   useEffect(() => {
@@ -121,15 +121,17 @@ export default function Chat() {
           body: formData,
         });
 
+        // 서버로부터 업로드 된 오디오 파일의 공개 위치 정보를 받아옴.
         const result = await uploadResponse.json();
         if (result.url) {
-          // Whisper API 로 텍스트 추출 요청
+          // Whisper API 에게 파일의 위치를 보내고 텍스트 추출 요청.
           const transcriptResponse = await fetch("/api/transcribe", {
             method: "POST",
             body: JSON.stringify({ fileUrl: result.url }),
             headers: { "Content-Type": "application/json" },
           });
 
+          // 받아온 text 정보를 transcription 상태값으로 업데이트.
           const transcriptResult = await transcriptResponse.json();
 
           if (transcriptResult.text) {
@@ -152,22 +154,6 @@ export default function Chat() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-between">
       <div className="fixed right-8 top-20 rounded-md bg-fuchsia-600 p-4 text-white">Chat Plus!</div>
-
-      {/* 녹음 버튼 */}
-      <button
-        onClick={isRecording ? handleStopRecording : startRecording}
-        className={`fixed right-8 top-44 rounded px-4 py-2 ${isRecording ? "animate-pulse bg-red-500" : "bg-blue-500"} text-white`}
-        disabled={isProcessingRecording}>
-        {isRecording ? "Stop Recording" : "Start Recording"}
-      </button>
-
-      {isProcessingRecording && <p className="mt-4 text-gray-600">Processing...</p>}
-
-      {transcription && (
-        <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">
-          <p className="text-center text-xl text-gray-800">{transcription}</p>
-        </div>
-      )}
 
       <div className="h-full w-full max-w-md rounded-lg bg-white p-6 shadow-md">
         <div className="flex h-full flex-col justify-between">
@@ -194,7 +180,8 @@ export default function Chat() {
             </div>
           )}
 
-          <form className="mt-4 flex w-full" onSubmit={handleSubmit}>
+          {/* flex 를 hidden 으로 변경하여 스크린에 form 이 나타나지 않게 함. */}
+          <form className="mt-4 hidden w-full" onSubmit={handleSubmit}>
             <input
               className="w-full rounded-l-lg border border-gray-300 p-2 focus:border-blue-300 focus:outline-none focus:ring"
               placeholder="제주도 오늘의 날씨는 어때?"
@@ -213,6 +200,22 @@ export default function Chat() {
               </button>
             )}
           </form>
+
+          {isProcessingRecording && <p className="mx-auto mt-4 text-gray-600">Processing...</p>}
+
+          {/*{transcription && (*/}
+          {/*  <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">*/}
+          {/*    <p className="text-center text-xl text-gray-800">{transcription}</p>*/}
+          {/*  </div>*/}
+          {/*)}*/}
+
+          {/* 녹음 버튼 */}
+          <button
+            onClick={isRecording ? handleStopRecording : startRecording}
+            className={`rounded px-4 py-3 ${isRecording ? "animate-pulse bg-red-500" : "bg-blue-500"} text-white`}
+            disabled={isProcessingRecording}>
+            {isRecording ? "대화 전송하기" : "대화 시작하기"}
+          </button>
         </div>
       </div>
     </div>
