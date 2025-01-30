@@ -85,6 +85,15 @@ const AudioRecorder = () => {
         </div>
       )}
 
+      {audioURL && (
+        <div className="mt-4">
+          <audio controls src={audioURL} className="mx-auto" />
+          {/*<a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">*/}
+          {/*  Download Recording(내 컴퓨터/휴대폰에 저장하기)*/}
+          {/*</a>*/}
+        </div>
+      )}
+
       <Link href={"/"} className="mt-10 text-blue-500 hover:underline">
         To Home!
       </Link>
