@@ -10,7 +10,8 @@ export default function Home() {
       <Link href={"/recorder"}>Go to Recorder! - 녹음한 파일을 다운 및 업로드하기</Link>
       <Link href={"/record-text"}>Go to Record To Text Page! - 음성 파일에서 text 추출하기</Link>
       <Link href={"/chatbot"}>Go to Chatbot! - text 기반의 기본 chatbot</Link>
-      <Link href={"/audio-chatbot"}>Go to Audio Chatbot! - text 로 질문하면 음성으로 대답 듣기</Link>
+      <Link href={"/upgraded-chatbot"}>Go to Upgraded Chatbot! - text 로 질문하면 음성으로 대답 듣기</Link>
+      <Link href={"/audio-chatbot"}>Go to Audio Chatbot! - 음성을 입력하면 text 로 변환, 이에 대한 대답을 음성으로 듣기</Link>
       <Link href={"/chat-plus"}>Go to Chat Plus! - 완전 음성형 Chatbot, 음성으로 질문하고 음성으로 대답 듣기</Link>
       {/*<Link href={"/whisper"}>Go to Whisper! - 오디오 파일에서 text 추출하기</Link>*/}
     </div>
