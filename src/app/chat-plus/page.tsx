@@ -65,6 +65,8 @@ export default function Chat() {
       console.error("Error generating audio:", error);
     } finally {
       setIsProcessingAudio(false);
+      // !
+      setTranscription("");
     }
   };
 
