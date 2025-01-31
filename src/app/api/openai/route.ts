@@ -1,17 +1,27 @@
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import OpenAI from "openai";
+import { NextResponse } from "next/server";
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-export async function POST(req: Request) {
-  const { messages } = await req.json();
-  console.log("Received messages:", messages);
+// * POST 요청으로 처리하는 부분
+// * 클라이언트 요청의 body 에 질문 내용을 받아와서 openai api 로 전달.
+export async function POST(request: Request) {
+  const { question } = await request.json();
 
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    messages,
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      {
+        role: "user",
+        content: `${question}`,
+      },
+    ],
   });
 
-  return result.toDataStreamResponse();
+  console.log(completion.choices[0].message);
+
+  return NextResponse.json(completion.choices[0].message);
 }

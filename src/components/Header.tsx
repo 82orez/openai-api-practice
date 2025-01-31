@@ -16,7 +16,7 @@ export default function Header() {
       <Link href="/">
         <h1 className="text-3xl font-semibold text-slate-600 lg:text-4xl">OpenAI API 체험관</h1>
       </Link>
-      <Link href={"/search"} className={"text-2xl lg:text-3xl"} data-cy="chatbotLink">
+      <Link href={"/text-generation"} className={"text-2xl lg:text-3xl"} data-cy="chatbotLink">
         <BsRobot />
       </Link>
     </header>

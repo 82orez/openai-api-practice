@@ -11,7 +11,8 @@ export async function POST(req: Request) {
   // 시스템 메시지 추가
   const systemMessage = {
     role: "system",
-    content: "Always respond in English.",
+    content:
+      "Always respond in English. Analyze and evaluate the user's English pronunciation, providing a score out of 5 (e.g., 4.5 out of 5). Also, explain areas where pronunciation correction is needed.",
   };
 
   // 기존 메시지 앞에 system 메시지 추가
