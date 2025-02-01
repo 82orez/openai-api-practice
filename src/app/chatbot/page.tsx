@@ -4,6 +4,7 @@ import { useChat } from "ai/react";
 import Link from "next/link";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
+import ReactMarkdown from "react-markdown";
 
 export default function Chat() {
   const { messages, input, isLoading, handleInputChange, handleSubmit } = useChat({ api: "/api/chat" });
@@ -23,7 +24,10 @@ export default function Chat() {
                 {m.role === "user" ? (
                   <div className={"w-fit max-w-[80%] rounded-md bg-amber-100 p-2"}>{m.content}</div>
                 ) : (
-                  <div className={"ml-auto w-fit max-w-[80%] rounded-md bg-blue-100 p-2"}>{m.content}</div>
+                  <div className={"ml-auto w-fit max-w-[80%] rounded-md bg-blue-100 p-2"}>
+                    {/* Markup 적용 */}
+                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                  </div>
                 )}
               </div>
             ))}
