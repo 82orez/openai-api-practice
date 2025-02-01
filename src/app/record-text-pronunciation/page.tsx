@@ -48,7 +48,7 @@ const AudioRecorder = () => {
     }
   }, [transcription]);
 
-  // !
+  // transcription 이 생성되면 transcription 의 상태값에 즉시 반영.
   useEffect(() => {
     if (transcription) {
       setQuestion(transcription);
@@ -182,6 +182,7 @@ const AudioRecorder = () => {
 
                   // * openai 의 답변 내용은 result(객체)의 content 에 담겨 있음.
                   setContent(result.content);
+                  setTranscription("");
                   return result;
                 } catch (e) {
                   console.error("Error Loading page:", e);
