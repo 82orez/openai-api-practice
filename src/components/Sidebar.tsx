@@ -48,6 +48,10 @@ export default function Sidebar() {
         상황극 챗봇(입국 심사대)
       </Link>
 
+      <Link href={"/pronunciation"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        발음 평가 챗봇
+      </Link>
+
       <Link href={"/admin"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Admin
       </Link>
