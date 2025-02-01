@@ -44,6 +44,10 @@ export default function Sidebar() {
         Chat plus
       </Link>
 
+      <Link href={"/role-playing"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        상황극 챗봇(입국 심사대)
+      </Link>
+
       <Link href={"/admin"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Admin
       </Link>
