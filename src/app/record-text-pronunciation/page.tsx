@@ -5,14 +5,41 @@
 // 서버에 저장된 음성 파일에서 text 를 추출하는 api: /api/transcribe - whisper
 
 import { useRecordingStore } from "@/stores/recordingStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [audioURLTTS, setAudioURLTTS] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Send POST request to /api/tts-chatbot when transcription changes
+  useEffect(() => {
+    if (transcription) {
+      const sendToChatbot = async () => {
+        try {
+          const response = await fetch("/api/tts-chatbot", {
+            method: "POST",
+            body: JSON.stringify({ text: transcription }),
+            headers: { "Content-Type": "application/json" },
+          });
+
+          const resultTTS = await response.json();
+          if (resultTTS.audioUrl) {
+            setAudioURLTTS(resultTTS.audioUrl);
+          } else {
+            console.error("Failed to generate audio");
+          }
+        } catch (error) {
+          console.error("Error sending transcription to chatbot:", error);
+        }
+      };
+
+      sendToChatbot();
+    }
+  }, [transcription]);
 
   const handleStopRecording = async () => {
     setIsProcessing(true);
@@ -67,7 +94,7 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <p className={"mb-8"}>녹음한 파일에서 텍스트 추출하기</p>
+      <p className={"mb-8"}>내 목소리 녹음하기</p>
 
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
@@ -81,13 +108,20 @@ const AudioRecorder = () => {
       {transcription && (
         <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">
           <p className="text-center text-xl text-gray-800">{transcription}</p>
-          <p className={"text-center"}>이 문장이 맞으신가요?</p>
         </div>
       )}
 
       {audioURL && (
         <div className="mt-4">
+          <div>내 영어 발음 듣기</div>
           <audio controls src={audioURL} className="mx-auto" />
+        </div>
+      )}
+
+      {audioURLTTS && (
+        <div className="mt-4">
+          <div>원어민 발음 듣기</div>
+          <audio controls src={audioURLTTS} className="mx-auto" />
         </div>
       )}
 
