@@ -83,9 +83,10 @@ export default function Chat() {
       const newAudio = new Audio(audioURL);
       audioRef.current = newAudio;
 
-      newAudio.oncanplaythrough = () => {
-        newAudio.play().catch((err) => console.error("Audio play failed:", err));
-      };
+      // * 오디오 자동 재생 부분 일단 삭제
+      // newAudio.oncanplaythrough = () => {
+      //   newAudio.play().catch((err) => console.error("Audio play failed:", err));
+      // };
 
       newAudio.onended = () => {
         console.log("Audio playback finished");
