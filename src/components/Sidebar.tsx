@@ -27,6 +27,9 @@ export default function Sidebar() {
       <Link href={"/record-text"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Recorder to Text
       </Link>
+      <Link href={"/record-text-pronunciation"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+        record-text-pronunciation (발음 평가)
+      </Link>
 
       <Link href={"/chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         기본 Chat-Bot
