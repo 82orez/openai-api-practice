@@ -48,6 +48,13 @@ const AudioRecorder = () => {
     }
   }, [transcription]);
 
+  // !
+  useEffect(() => {
+    if (transcription) {
+      setQuestion(transcription);
+    }
+  }, [transcription]);
+
   const handleStopRecording = async () => {
     setIsProcessing(true);
 
