@@ -27,7 +27,7 @@ export default function Sidebar() {
       <Link href={"/record-text"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         Recorder to Text
       </Link>
-      <Link href={"/record-text-pronunciation"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/record-text-pronunciation"} className="w-48 font-bold text-red-400 hover:underline" onClick={toggle}>
         발음 훈련소
       </Link>
 
@@ -47,7 +47,7 @@ export default function Sidebar() {
         Chat plus
       </Link>
 
-      <Link href={"/role-playing"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/role-playing"} className="w-48 font-bold text-red-400 hover:underline" onClick={toggle}>
         상황극 챗봇(입국 심사대)
       </Link>
 

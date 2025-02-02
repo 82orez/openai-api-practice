@@ -187,7 +187,7 @@ const AudioRecorder = () => {
             />
             {audioURLTTS && !content && !isRecording && !isProcessing && !isTTSProcessing && (
               <button
-                className={"rounded-md border-2 bg-amber-100 p-2"}
+                className={"rounded-md border-2 bg-red-200 p-4 font-bold"}
                 onClick={async () => {
                   if (!question) {
                     alert("Please input Question!");
@@ -219,7 +219,7 @@ const AudioRecorder = () => {
               </button>
             )}
 
-            <div className={"mt-8"}>{content}</div>
+            <div className={clsx("mt-8 rounded-md bg-amber-100", { "p-4": content })}>{content}</div>
           </>
         )}
       </div>
