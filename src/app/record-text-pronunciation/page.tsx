@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import clsx from "clsx";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
@@ -140,13 +141,13 @@ const AudioRecorder = () => {
           </div>
         )}
 
-        {!audioURLTTS && isProcessing && <div className={"text-red-500"}>원어민 발음 생성 중...</div>}
-        {!audioURLTTS && isTTSProcessing && <div className={"text-blue-500"}>원어민 발음 생성 중...</div>}
+        {!audioURLTTS && isProcessing && <AiOutlineLoading3Quarters className={"mx-auto my-4 animate-spin text-xl text-blue-500"} />}
+        {!audioURLTTS && isTTSProcessing && <AiOutlineLoading3Quarters className={"mx-auto my-4 animate-spin text-xl text-red-400"} />}
 
         {audioURLTTS && (
           <div>
             {isProcessing ? (
-              <div className={"text-red-500"}>원어민 발음 생성 중...</div>
+              <AiOutlineLoading3Quarters className={"mx-auto my-4 animate-spin text-xl text-amber-700"} />
             ) : (
               <div className="mt-4">
                 <div>원어민 발음과 비교해 보기</div>
