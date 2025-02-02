@@ -1,8 +1,9 @@
 "use client";
 
-// * 크게 2가지 api 가 필요
-// 녹음한 내용을 서버에 저장하는 api: /api/recordings
-// 서버에 저장된 음성 파일에서 text 를 추출하는 api: /api/transcribe - whisper
+// * 크게 3가지 api 가 필요
+// 녹음한 내 목소리를 서버에 저장하는 api: /api/recordings
+// 서버에 저장된 내 목소리 음성 파일에서 text 를 추출하는 api: /api/transcribe - whisper
+// 추출된 text 를 원어민 음성 오디오 파일로 생성하는 api: /api/tts-chatbot - TTS
 
 import { useRecordingStore } from "@/stores/recordingStore";
 import { useEffect, useState } from "react";
@@ -48,7 +49,7 @@ const AudioRecorder = () => {
     }
   }, [transcription]);
 
-  // transcription 이 생성되면 transcription 의 상태값에 즉시 반영.
+  // transcription 이 생성되면 question 의 상태값에 즉시 반영.
   useEffect(() => {
     if (transcription) {
       setQuestion(transcription);
@@ -125,25 +126,33 @@ const AudioRecorder = () => {
         </div>
       )}
 
-      {audioURL && (
-        <div className="mt-4">
-          <div>내 영어 발음 듣기</div>
-          <audio controls src={audioURL} className="mx-auto" />
-        </div>
-      )}
+      <div className={isRecording ? "hidden" : ""}>
+        {audioURL && (
+          <div className="mt-4">
+            <div>내 영어 발음 듣기</div>
+            <audio controls src={audioURL} className="mx-auto" />
+          </div>
+        )}
 
-      {audioURLTTS && (
-        <div className="mt-4">
-          <div>원어민 발음 듣기</div>
-          <audio controls src={audioURLTTS} className="mx-auto" />
-        </div>
-      )}
+        {audioURLTTS && (
+          <div>
+            {isProcessing ? (
+              <div>원어민 발음 생성 중...</div>
+            ) : (
+              <div className="mt-4">
+                <div>원어민 발음과 비교해 보기</div>
+                <audio controls src={audioURLTTS} className="mx-auto" />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       <Link href={"/"} className="mt-10 text-blue-500 hover:underline">
         To Home!
       </Link>
 
-      <div className={""}>
+      <div className={"hidden"}>
         {/* openai api 로부터 응답을 받기까지 상당 시간이 걸리므로 Loading 과정 추가 */}
         {isOpenAiLoading ? (
           <div className={"animate-pulse text-8xl"}>답변 생성 중...</div>
