@@ -17,6 +17,7 @@ const AudioRecorder = () => {
   const [audioURLTTS, setAudioURLTTS] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isTTSProcessing, setIsTTSProcessing] = useState(false);
   // * 질문을 위한 상태 관리
   const [question, setQuestion] = useState("");
   // * 답변을 처리하기 위한 상태 관리
@@ -29,6 +30,8 @@ const AudioRecorder = () => {
     if (transcription) {
       const sendToChatbot = async () => {
         try {
+          setIsTTSProcessing(true);
+
           const response = await fetch("/api/tts-chatbot", {
             method: "POST",
             body: JSON.stringify({ text: transcription }),
@@ -43,6 +46,8 @@ const AudioRecorder = () => {
           }
         } catch (error) {
           console.error("Error sending transcription to chatbot:", error);
+        } finally {
+          setIsTTSProcessing(false);
         }
       };
 
@@ -135,10 +140,13 @@ const AudioRecorder = () => {
           </div>
         )}
 
+        {!audioURLTTS && isProcessing && <div className={"text-red-500"}>원어민 발음 생성 중...</div>}
+        {!audioURLTTS && isTTSProcessing && <div className={"text-blue-500"}>원어민 발음 생성 중...</div>}
+
         {audioURLTTS && (
           <div>
             {isProcessing ? (
-              <div>원어민 발음 생성 중...</div>
+              <div className={"text-red-500"}>원어민 발음 생성 중...</div>
             ) : (
               <div className="mt-4">
                 <div>원어민 발음과 비교해 보기</div>
