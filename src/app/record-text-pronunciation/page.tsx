@@ -121,6 +121,9 @@ const AudioRecorder = () => {
       <button
         onClick={() => {
           if (!isRecording) {
+            setAudioURL(null);
+            setAudioURLTTS(null);
+            setTranscription(null);
             setContent(""); // 녹음 시작 시 content 상태 초기화
             startRecording();
           } else {
