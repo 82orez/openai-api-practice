@@ -9,6 +9,7 @@ import { useRecordingStore } from "@/stores/recordingStore";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import clsx from "clsx";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
@@ -121,7 +122,7 @@ const AudioRecorder = () => {
       {isProcessing && <p className="mt-4 text-gray-600">Processing...</p>}
 
       {transcription && (
-        <div className="mt-4 w-full max-w-lg rounded border bg-gray-100 p-4">
+        <div className={clsx("mt-4 w-full max-w-lg rounded border bg-gray-100 p-4", { hidden: isProcessing || isRecording })}>
           <p className="text-center text-xl text-gray-800">{transcription}</p>
         </div>
       )}
