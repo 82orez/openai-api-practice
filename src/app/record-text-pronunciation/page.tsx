@@ -162,15 +162,15 @@ const AudioRecorder = () => {
         To Home!
       </Link>
 
-      <div className={"hidden"}>
+      <div className={""}>
         {/* openai api 로부터 응답을 받기까지 상당 시간이 걸리므로 Loading 과정 추가 */}
         {isOpenAiLoading ? (
-          <div className={"animate-pulse text-8xl"}>답변 생성 중...</div>
+          <AiOutlineLoading3Quarters className={"mx-auto my-4 animate-spin text-xl text-blue-500"} />
         ) : (
           <>
             <input
               type="text"
-              className={"w-full rounded-md border-4 border-amber-500 p-2"}
+              className={"hidden w-full rounded-md border-4 border-amber-500 p-2"}
               placeholder={"질문을 입력해 주세요."}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -196,12 +196,9 @@ const AudioRecorder = () => {
 
                   // Loading 종료
                   setIsOpenAiLoading(false);
-                  // 질문 입력창을 공란으로
-                  setQuestion("");
 
                   // * openai 의 답변 내용은 result(객체)의 content 에 담겨 있음.
                   setContent(result.content);
-                  setTranscription("");
                   return result;
                 } catch (e) {
                   console.error("Error Loading page:", e);
