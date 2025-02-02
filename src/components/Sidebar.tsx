@@ -28,7 +28,7 @@ export default function Sidebar() {
         Recorder to Text
       </Link>
       <Link href={"/record-text-pronunciation"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
-        record-text-pronunciation (발음 평가)
+        발음 훈련소
       </Link>
 
       <Link href={"/chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>

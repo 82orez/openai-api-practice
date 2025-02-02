@@ -116,10 +116,17 @@ const AudioRecorder = () => {
 
   return (
     <div className="flex flex-col items-center p-4">
-      <p className={"mb-8"}>내 목소리 녹음하기</p>
+      <p className={"mb-8 text-xl"}>내 목소리를 녹음하고 원어민 선생님 발음과 비교해 보세요.</p>
 
       <button
-        onClick={isRecording ? handleStopRecording : startRecording}
+        onClick={() => {
+          if (!isRecording) {
+            setContent(""); // 녹음 시작 시 content 상태 초기화
+            startRecording();
+          } else {
+            handleStopRecording();
+          }
+        }}
         className={`rounded px-4 py-2 ${isRecording ? "animate-pulse bg-red-500" : "bg-blue-500"} text-white`}
         disabled={isProcessing}>
         {isRecording ? "Stop Recording" : "Start Recording"}
@@ -175,37 +182,39 @@ const AudioRecorder = () => {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
-            <button
-              className={"rounded-md border-2 bg-amber-100 p-2"}
-              onClick={async () => {
-                if (!question) {
-                  alert("Please input Question!");
-                  return;
-                }
+            {audioURLTTS && !content && !isRecording && !isProcessing && !isTTSProcessing && (
+              <button
+                className={"rounded-md border-2 bg-amber-100 p-2"}
+                onClick={async () => {
+                  if (!question) {
+                    alert("Please input Question!");
+                    return;
+                  }
 
-                try {
-                  // 클릭하면 Loading 시작
-                  setIsOpenAiLoading(true);
+                  try {
+                    // 클릭하면 Loading 시작
+                    setIsOpenAiLoading(true);
 
-                  // * 질문 내용을 body 에 담아 서버에 post 요청.
-                  // * 반환 받은 내용을 result 에 할당.
-                  const res = await axios.post("/api/openai", {
-                    question: question,
-                  });
-                  const result = await res.data;
+                    // * 질문 내용을 body 에 담아 서버에 post 요청.
+                    // * 반환 받은 내용을 result 에 할당.
+                    const res = await axios.post("/api/openai", {
+                      question: question,
+                    });
+                    const result = await res.data;
 
-                  // Loading 종료
-                  setIsOpenAiLoading(false);
+                    // Loading 종료
+                    setIsOpenAiLoading(false);
 
-                  // * openai 의 답변 내용은 result(객체)의 content 에 담겨 있음.
-                  setContent(result.content);
-                  return result;
-                } catch (e) {
-                  console.error("Error Loading page:", e);
-                }
-              }}>
-              Post Request
-            </button>
+                    // * openai 의 답변 내용은 result(객체)의 content 에 담겨 있음.
+                    setContent(result.content);
+                    return result;
+                  } catch (e) {
+                    console.error("Error Loading page:", e);
+                  }
+                }}>
+                AI 에게 문법 및 발음 체크하기
+              </button>
+            )}
 
             <div className={"mt-8"}>{content}</div>
           </>
