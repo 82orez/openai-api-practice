@@ -135,16 +135,16 @@ const AudioRecorder = () => {
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
 
-      {isProcessing && <p className="mt-4 text-gray-600">Processing...</p>}
+      {/*{isProcessing && <p className="mt-4 text-gray-600">Processing...</p>}*/}
 
-      {transcription && (
+      {transcription && audioURLTTS && (
         <div className={clsx("mt-4 w-full max-w-lg rounded border bg-gray-100 p-4", { hidden: isProcessing || isRecording })}>
           <p className="text-center text-xl text-gray-800">{transcription}</p>
         </div>
       )}
 
       <div className={isRecording ? "hidden" : ""}>
-        {audioURL && (
+        {audioURL && audioURLTTS && (
           <div className="mt-4">
             <div>내 영어 발음 듣기</div>
             <audio controls src={audioURL} className="mx-auto" />
