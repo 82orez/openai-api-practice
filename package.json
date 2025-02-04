@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.19",
+    "@auth/prisma-adapter": "^2.7.4",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@prisma/client": "^6.2.1",
     "@supabase/ssr": "^0.5.2",
@@ -19,6 +20,7 @@
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "next": "15.1.4",
+    "next-auth": "^4.24.11",
     "openai": "^4.78.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
