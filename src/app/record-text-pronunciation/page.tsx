@@ -11,6 +11,7 @@ import Link from "next/link";
 import axios from "axios";
 import clsx from "clsx";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import Extractor from "@/components/Extractor";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
@@ -219,7 +220,10 @@ const AudioRecorder = () => {
               </button>
             )}
 
-            <div className={clsx("mt-8 rounded-md bg-amber-100", { "p-4": content })}>{content}</div>
+            <div className={clsx("mt-8 rounded-md bg-amber-100", { "p-4": content })}>
+              <Extractor content={content} />
+              {content}
+            </div>
           </>
         )}
       </div>
