@@ -3,6 +3,7 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AuthProvider from "@/app/auth-provider";
 
 interface Props {
   children?: React.ReactNode;
@@ -25,15 +26,17 @@ interface Props {
 
 export const NextLayout = ({ children }: Props) => {
   return (
-    <div className={"flex h-screen w-screen text-sm lg:text-base"}>
-      <Sidebar />
-      <div className="flex flex-1 flex-col lg:ml-64">
-        <Header />
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          <main className="flex flex-1 flex-col border-2 bg-gray-200">{children}</main>
-          <Footer />
+    <AuthProvider>
+      <div className={"flex h-screen w-screen text-sm lg:text-base"}>
+        <Sidebar />
+        <div className="flex flex-1 flex-col lg:ml-64">
+          <Header />
+          <div className="flex flex-1 flex-col overflow-y-auto">
+            <main className="flex flex-1 flex-col border-2 bg-gray-200">{children}</main>
+            <Footer />
+          </div>
         </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 };

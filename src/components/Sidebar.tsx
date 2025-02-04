@@ -5,9 +5,15 @@ import clsx from "clsx";
 import { AiFillGithub, AiFillInstagram, AiOutlineClose } from "react-icons/ai";
 import Link from "next/link";
 import IconButton from "@/components/IconButton";
+import { useSession } from "next-auth/react";
+import SignOutButton from "@/components/SignOutButton";
 
 export default function Sidebar() {
   const { isOpen, toggle } = useSidebarStateStore();
+  const { status, data } = useSession();
+  console.log("status: ", status);
+  console.log("data: ", data);
+
   return (
     <div className={clsx("fixed z-50 min-h-screen flex-col gap-6 border-r bg-white p-10 pr-6 text-base lg:flex", { hidden: !isOpen, flex: isOpen })}>
       <button className={"absolute right-5 top-5 text-3xl lg:hidden"} onClick={toggle} data-cy={"sidebarClose"}>
@@ -59,6 +65,15 @@ export default function Sidebar() {
         Admin
       </Link>
 
+      {!data && (
+        <Link href={"/users/sign-in"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+          로그인
+        </Link>
+      )}
+
+      {/*<div>Hello~ {data?.user.name}</div>*/}
+      {/*<img src={data?.user?.image || ""} width={50} height={50} alt={data?.user?.name || ""} className={"rounded-full"} />*/}
+
       {/*<Link href={"/"} onClick={toggle} className={"hover:underline"}>*/}
       {/*  카테고리*/}
       {/*</Link>*/}
@@ -67,6 +82,14 @@ export default function Sidebar() {
       {/*  <IconButton Icon={AiFillInstagram} component={Link} label="instagramLink" href="https://www.instagram.com/dhoonjang" target="_blank" />*/}
       {/*  <IconButton Icon={AiFillGithub} component={Link} label="githubLink" href="https://www.github.com/dhoonjang" target="_blank" />*/}
       {/*</div>*/}
+
+      {data && (
+        <div>
+          <div>Hello~ {data?.user?.name}</div>
+          <img src={data?.user?.image || undefined} width={50} height={50} alt={data?.user?.name || ""} className={"rounded-full"} />
+          <SignOutButton />
+        </div>
+      )}
     </div>
   );
 }
