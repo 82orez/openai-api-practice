@@ -61,7 +61,7 @@ export default function Sidebar() {
         발음 평가 챗봇
       </Link>
 
-      <Link href={"/admin"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/admin"} className={clsx("w-48 font-medium text-gray-600 hover:underline", { hidden: !data })} onClick={toggle}>
         Admin
       </Link>
 
