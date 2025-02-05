@@ -30,6 +30,8 @@ export default function SignInPage() {
 
   const [email, setEmail] = useState<null | string>(null);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     // ? 오류 방지를 위해 아래 코드를 클라이언트 환경에서만 실행할 수 있도록 설정.
     if (typeof window !== "undefined") {
@@ -40,13 +42,18 @@ export default function SignInPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    setIsMobile(/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase()));
+  }, []);
+
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isKakaoLoading, setIsKakaoLoading] = useState(false);
   const [isNaverLoading, setIsNaverLoading] = useState(false);
 
   const handleClickGoogle = async () => {
     setIsGoogleLoading(true);
-    await signIn("google", { callbackUrl: "/" });
+    await signIn("google", { callbackUrl: "/", redirect: isMobile });
   };
   const handleClickKakao = async () => {
     setIsKakaoLoading(true);
