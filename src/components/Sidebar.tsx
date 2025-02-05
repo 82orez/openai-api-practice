@@ -30,29 +30,31 @@ export default function Sidebar() {
         Home
       </Link>
 
-      <Link href={"/tts"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/tts"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         TTS
       </Link>
 
       <Link href={"/recorder"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
         기본 Recorder
       </Link>
-      <Link href={"/record-text"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+
+      <Link href={"/record-text"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         Recorder to Text
       </Link>
+
       <Link href={"/record-text-pronunciation"} className="w-48 font-bold text-red-400 hover:underline" onClick={toggle}>
         발음 훈련소
       </Link>
 
-      <Link href={"/chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/chatbot"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         기본 Chat-Bot
       </Link>
 
-      <Link href={"/upgraded-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/upgraded-chatbot"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         Upgraded Chat-Bot
       </Link>
 
-      <Link href={"/audio-chatbot"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/audio-chatbot"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         Audio Chat-Bot
       </Link>
 
@@ -60,11 +62,11 @@ export default function Sidebar() {
         Chat plus
       </Link>
 
-      <Link href={"/role-playing"} className="w-48 font-bold text-red-400 hover:underline" onClick={toggle}>
+      <Link href={"/role-playing"} className="hidden w-48 font-bold text-red-400 hover:underline lg:block" onClick={toggle}>
         상황극 챗봇(입국 심사대)
       </Link>
 
-      <Link href={"/pronunciation"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
+      <Link href={"/pronunciation"} className="hidden w-48 font-medium text-gray-600 hover:underline lg:block" onClick={toggle}>
         발음 평가 챗봇
       </Link>
 
