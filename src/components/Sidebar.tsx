@@ -15,7 +15,14 @@ export default function Sidebar() {
   console.log("data: ", data);
 
   return (
-    <div className={clsx("fixed z-50 min-h-screen flex-col gap-6 border-r bg-white p-10 pr-6 text-base lg:flex", { hidden: !isOpen, flex: isOpen })}>
+    <div
+      className={clsx(
+        "fixed left-0 top-0 z-50 h-full min-h-screen w-72 flex-col gap-6 overflow-y-auto border-r bg-white p-10 pr-6 text-base lg:flex",
+        {
+          hidden: !isOpen,
+          flex: isOpen,
+        },
+      )}>
       <button className={"absolute right-5 top-5 text-3xl lg:hidden"} onClick={toggle} data-cy={"sidebarClose"}>
         <AiOutlineClose />
       </button>
