@@ -77,10 +77,8 @@ export default function SignInPage() {
       ) : (
         <>
           <div className="flex flex-col gap-6">
-            <Link href={"/"}>Move to Home</Link>
+            <div className="text-center text-xl font-semibold md:text-2xl">줌마영어 사관학교에 오신 것을 환영합니다.</div>
             <h1 className="text-center text-lg font-semibold">로그인 또는 회원가입</h1>
-            <hr className="border-b-gray-300" />
-            <div className="text-xl font-semibold md:text-2xl">Fastcampus Nextbnb 에 오신 것을 환영합니다.</div>
           </div>
 
           <div className="mx-auto mt-16 flex max-w-[320px] flex-col gap-5">
@@ -131,6 +129,12 @@ export default function SignInPage() {
                 <div className={"grow text-white"}>네이버 로그인</div>
               </button>
             )}
+          </div>
+
+          <div className={"mx-auto mt-20 w-fit hover:underline"}>
+            <Link href={"/"} className={""}>
+              Move to Home
+            </Link>
           </div>
         </>
       )}
