@@ -46,7 +46,14 @@ export default function SignInPage() {
 
   const handleClickGoogle = async () => {
     setIsGoogleLoading(true);
-    await signIn("google", { callbackUrl: "/", redirect: true });
+
+    const isWebView = /(WebView|Android.*AppleWebKit)/i.test(navigator.userAgent);
+
+    if (isWebView) {
+      window.open(`/api/auth/signin?provider=google`, "_system");
+    } else {
+      await signIn("google", { callbackUrl: "/" });
+    }
   };
   const handleClickKakao = async () => {
     setIsKakaoLoading(true);
