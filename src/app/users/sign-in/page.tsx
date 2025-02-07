@@ -46,7 +46,7 @@ export default function SignInPage() {
 
   const handleClickGoogle = async () => {
     setIsGoogleLoading(true);
-    await signIn("google", { callbackUrl: "/" });
+    await signIn("google", { callbackUrl: "/", redirect: true });
   };
   const handleClickKakao = async () => {
     setIsKakaoLoading(true);
