@@ -74,6 +74,10 @@ export default function Sidebar() {
         Admin
       </Link>
 
+      {/*<Link href={"/users/sign-up"} className={clsx("w-48 font-medium text-gray-600 hover:underline")} onClick={toggle}>*/}
+      {/*  회원 가입*/}
+      {/*</Link>*/}
+
       {!data && (
         <Link href={"/users/sign-in"} className="w-48 font-medium text-gray-600 hover:underline" onClick={toggle}>
           로그인
