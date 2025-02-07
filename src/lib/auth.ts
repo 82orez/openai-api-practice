@@ -12,6 +12,18 @@ export const authOptions: NextAuthOptions = {
     maxAge: 60 * 60 * 24, // 24 hours
     updateAge: 60 * 60 * 2, // 2 hours
   },
+  cookies: {
+    sessionToken: {
+      name: "__Secure-next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
+
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
