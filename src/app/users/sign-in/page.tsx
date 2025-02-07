@@ -46,8 +46,12 @@ export default function SignInPage() {
 
   const handleClickGoogle = async () => {
     setIsGoogleLoading(true);
-    await signIn("google", { callbackUrl: "/" });
+    if (typeof window !== "undefined") {
+      // 기본 브라우저에서 OAuth 페이지 열기
+      window.location.href = `/api/auth/signin/google?callbackUrl=${encodeURIComponent("/")}`;
+    }
   };
+
   const handleClickKakao = async () => {
     setIsKakaoLoading(true);
     await signIn("kakao", { callbackUrl: "/" });
