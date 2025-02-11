@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import Google from "next-auth/providers/google";
 import Naver from "next-auth/providers/naver";
 import Kakao from "next-auth/providers/kakao";
