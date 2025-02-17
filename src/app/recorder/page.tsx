@@ -11,6 +11,7 @@ const AudioRecorder = () => {
   const { isRecording, isLoading, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
+  const [isUpLoading, setIsUpLoading] = useState(false);
 
   const handleStopRecording = async () => {
     const audioBlob = await stopRecording();
@@ -25,6 +26,8 @@ const AudioRecorder = () => {
     if (!audioURL) return;
 
     try {
+      setIsUpLoading(true);
+
       const response = await fetch(audioURL);
       const audioBlob = await response.blob();
       const formData = new FormData();
@@ -47,6 +50,8 @@ const AudioRecorder = () => {
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("An error occurred while saving the recording.");
+    } finally {
+      setIsUpLoading(false);
     }
   };
 
@@ -80,10 +85,9 @@ const AudioRecorder = () => {
       {/*  <p>Stop</p>*/}
       {/*</div>*/}
 
-      <p className={"mt-10"}>녹음한 내용 듣기</p>
-
       {audioURL && (
         <div className="mb-10 mt-4">
+          <p className={"mb-3 mt-10 text-center"}>녹음한 내용 듣기</p>
           <audio controls src={audioURL} className="mx-auto" />
           {/*<a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">*/}
           {/*  Download Recording(내 컴퓨터/휴대폰에 저장하기)*/}
@@ -92,8 +96,10 @@ const AudioRecorder = () => {
       )}
 
       {audioURL && (
-        <button onClick={handleSaveRecording} className="mt-4 rounded bg-green-500 px-4 py-2 text-white">
-          Save Recording to Server(서버에 저장하기)
+        <button
+          onClick={handleSaveRecording}
+          className="mt-4 flex min-h-10 w-1/4 items-center justify-center rounded bg-green-500 px-4 py-2 text-white">
+          {isUpLoading ? <AiOutlineLoading3Quarters className="animate-spin text-xl" /> : <div className={""}>Save Recording to Server</div>}
         </button>
       )}
 
