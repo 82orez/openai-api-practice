@@ -3,6 +3,8 @@
 import { useRecordingStore } from "@/stores/recordingStore";
 import { useState } from "react";
 import Link from "next/link";
+import { FaMicrophone } from "react-icons/fa6";
+import { FaRegStopCircle } from "react-icons/fa";
 
 const AudioRecorder = () => {
   const { isRecording, startRecording, stopRecording } = useRecordingStore();
@@ -53,12 +55,29 @@ const AudioRecorder = () => {
 
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
-        className={`rounded px-4 py-2 ${isRecording ? "bg-red-500" : "bg-blue-500"} text-white`}>
-        {isRecording ? "Stop Recording" : "Start Recording"}
+        className={`rounded px-4 py-2 ${isRecording ? "animate-pulse text-red-500" : "text-gray-900"}`}>
+        {isRecording ? (
+          <div>
+            <FaRegStopCircle size={45} className={"mb-2"} />
+            <p className={"text-xl font-semibold text-red-400"}>Stop</p>
+          </div>
+        ) : (
+          <div className={"flex flex-col items-center justify-center"}>
+            <FaMicrophone size={50} className={"mb-2"} />
+            <p className={"text-xl font-semibold"}>Start</p>
+          </div>
+        )}
       </button>
 
+      {/*<div>*/}
+      {/*  <FaRegStopCircle size={45} className={"mb-2"} />*/}
+      {/*  <p>Stop</p>*/}
+      {/*</div>*/}
+
+      <p className={"mt-10"}>녹음한 내용 듣기</p>
+
       {audioURL && (
-        <div className="mt-4">
+        <div className="mb-10 mt-4">
           <audio controls src={audioURL} className="mx-auto" />
           {/*<a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">*/}
           {/*  Download Recording(내 컴퓨터/휴대폰에 저장하기)*/}
