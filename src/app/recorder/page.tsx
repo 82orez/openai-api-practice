@@ -5,9 +5,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { FaMicrophone } from "react-icons/fa6";
 import { FaRegStopCircle } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const AudioRecorder = () => {
-  const { isRecording, startRecording, stopRecording } = useRecordingStore();
+  const { isRecording, isLoading, startRecording, stopRecording } = useRecordingStore();
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
 
@@ -55,11 +56,16 @@ const AudioRecorder = () => {
 
       <button
         onClick={isRecording ? handleStopRecording : startRecording}
-        className={`rounded px-4 py-2 ${isRecording ? "animate-pulse text-red-500" : "text-gray-900"}`}>
+        className={`min-h-24 rounded px-4 py-2 ${isRecording ? "animate-pulse text-red-500" : "text-gray-900"}`}>
         {isRecording ? (
           <div>
             <FaRegStopCircle size={45} className={"mb-2"} />
             <p className={"text-xl font-semibold text-red-400"}>Stop</p>
+          </div>
+        ) : isLoading ? (
+          <div className={"flex flex-col items-center justify-center"}>
+            <AiOutlineLoading3Quarters className={"animate-spin text-gray-900"} />
+            <p className={"mt-4 animate-pulse"}>준비 중</p>
           </div>
         ) : (
           <div className={"flex flex-col items-center justify-center"}>

@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 type RecordingState = {
   isRecording: boolean;
+  isLoading: boolean;
   startRecording: () => void;
   stopRecording: () => Promise<Blob | null>;
 };
@@ -12,7 +13,10 @@ export const useRecordingStore = create<RecordingState>((set) => {
 
   return {
     isRecording: false,
+    isLoading: false,
     startRecording: async () => {
+      set({ isLoading: true });
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
@@ -23,6 +27,7 @@ export const useRecordingStore = create<RecordingState>((set) => {
 
       mediaRecorder.start();
       set({ isRecording: true });
+      set({ isLoading: false });
     },
     stopRecording: () => {
       return new Promise((resolve) => {
