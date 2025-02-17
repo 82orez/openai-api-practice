@@ -43,7 +43,7 @@ const AudioRecorder = () => {
       if (result.url) {
         setUploadedURL(result.url);
         console.log(`File saved at: ${result.url}`);
-        alert("Successfully uploaded audio.");
+        // alert("Successfully uploaded audio.");
       } else {
         alert("Failed to save file");
       }
@@ -98,7 +98,7 @@ const AudioRecorder = () => {
       {audioURL && (
         <button
           onClick={handleSaveRecording}
-          className="mt-4 flex min-h-10 w-1/4 items-center justify-center rounded bg-green-500 px-4 py-2 text-white">
+          className="mt-4 flex min-h-12 w-1/4 min-w-52 items-center justify-center rounded bg-green-500 px-4 py-2 text-white">
           {isUpLoading ? <AiOutlineLoading3Quarters className="animate-spin text-xl" /> : <div className={""}>Save Recording to Server</div>}
         </button>
       )}
@@ -106,14 +106,14 @@ const AudioRecorder = () => {
       {uploadedURL && (
         <div className="mt-4 text-center">
           <p className="text-green-600">File saved successfully!</p>
-          <a href={uploadedURL} target={"_blank"} download className="text-blue-500 underline">
-            Download from Server
-          </a>
+          {/*<a href={uploadedURL} target={"_blank"} download className="text-blue-500 underline">*/}
+          {/*  Download from Server*/}
+          {/*</a>*/}
         </div>
       )}
 
       <Link href={"/"} className="mt-10 text-blue-500 hover:underline">
-        To Home!
+        Back to Home!
       </Link>
     </div>
   );
