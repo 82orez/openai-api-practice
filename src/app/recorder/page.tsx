@@ -12,6 +12,7 @@ const AudioRecorder = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [uploadedURL, setUploadedURL] = useState<string | null>(null);
   const [isUpLoading, setIsUpLoading] = useState(false);
+  const [recordCount, setRecordCount] = useState<number | null>(null);
 
   const handleStopRecording = async () => {
     const audioBlob = await stopRecording();
@@ -42,14 +43,14 @@ const AudioRecorder = () => {
       const result = await uploadResponse.json();
       if (result.url) {
         setUploadedURL(result.url);
+        setRecordCount(result.count);
         console.log(`File saved at: ${result.url}`);
-        // alert("Successfully uploaded audio.");
       } else {
         alert(result.error);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
-      alert(error);
+      alert("An error occurred while saving the recording.");
     } finally {
       setIsUpLoading(false);
     }
@@ -80,18 +81,10 @@ const AudioRecorder = () => {
         )}
       </button>
 
-      {/*<div>*/}
-      {/*  <FaRegStopCircle size={45} className={"mb-2"} />*/}
-      {/*  <p>Stop</p>*/}
-      {/*</div>*/}
-
       {audioURL && (
         <div className="mb-10 mt-4">
           <p className={"mb-3 mt-10 text-center"}>녹음한 내용 듣기</p>
           <audio controls src={audioURL} className="mx-auto" />
-          {/*<a href={audioURL} download="recording.mp3" className="mt-2 block text-blue-500 underline">*/}
-          {/*  Download Recording(내 컴퓨터/휴대폰에 저장하기)*/}
-          {/*</a>*/}
         </div>
       )}
 
@@ -106,14 +99,12 @@ const AudioRecorder = () => {
       {uploadedURL && (
         <div className="mt-4 text-center">
           <p className="text-green-600">File saved successfully!</p>
-          {/*<a href={uploadedURL} target={"_blank"} download className="text-blue-500 underline">*/}
-          {/*  Download from Server*/}
-          {/*</a>*/}
+          {recordCount !== null && <p>오늘 저장한 파일 개수: {recordCount}개</p>}
         </div>
       )}
 
       <Link href={"/"} className="mt-10 text-blue-500 hover:underline">
-        Back to Home!
+        Back to Home
       </Link>
     </div>
   );
