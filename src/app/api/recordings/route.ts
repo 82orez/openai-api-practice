@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     const fileUrl = publicUrlData.publicUrl;
 
     // Prisma DB에 저장
-    await prisma.recording.create({
+    await prisma.recordings.create({
       data: {
         userId: user.id,
         fileUrl,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const count = await prisma.recording.count({
+    const count = await prisma.recordings.count({
       where: {
         userId: user.id,
         createdAt: {

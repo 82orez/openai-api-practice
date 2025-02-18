@@ -101,7 +101,7 @@ export type Database = {
           },
         ]
       }
-      Recording: {
+      Recordings: {
         Row: {
           createdAt: string
           fileUrl: string
@@ -122,7 +122,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "Recording_userId_fkey"
+            foreignKeyName: "Recordings_userId_fkey"
             columns: ["userId"]
             isOneToOne: false
             referencedRelation: "User"
