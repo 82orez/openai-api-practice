@@ -91,7 +91,8 @@ const AudioRecorder = () => {
       {audioURL && (
         <button
           onClick={handleSaveRecording}
-          className="mt-4 flex min-h-12 w-1/4 min-w-52 items-center justify-center rounded bg-green-500 px-4 py-2 text-white">
+          className="mt-4 flex min-h-12 w-1/4 min-w-52 items-center justify-center rounded bg-green-500 px-4 py-2 text-white disabled:opacity-50"
+          disabled={isRecording || isLoading || isUpLoading}>
           {isUpLoading ? <AiOutlineLoading3Quarters className="animate-spin text-xl" /> : <div className={""}>Save Recording to Server</div>}
         </button>
       )}
