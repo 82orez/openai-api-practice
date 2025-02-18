@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const supabase = await createClient();
     const formData = await req.formData();
     const audioFile = formData.get("audio") as File;
 
@@ -12,11 +27,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // 파일을 버퍼로 변환
     const buffer = Buffer.from(await audioFile.arrayBuffer());
-    const fileName = `recording-${Date.now()}.mp3`;
+    const fileName = `recordings/${user.id}/recording-${Date.now()}.mp3`;
 
-    // Supabase Storage 에 파일 업로드
     const { data, error } = await supabase.storage.from("recordings").upload(fileName, buffer, {
       contentType: "audio/mpeg",
       upsert: true,
@@ -29,10 +42,33 @@ export async function POST(req: NextRequest) {
 
     // 업로드된 파일의 URL 가져오기
     const { data: publicUrlData } = supabase.storage.from("recordings").getPublicUrl(fileName);
+    const fileUrl = publicUrlData.publicUrl;
+
+    // Prisma DB에 저장
+    await prisma.recording.create({
+      data: {
+        userId: user.id,
+        fileUrl,
+      },
+    });
+
+    // 오늘 저장한 파일 개수 조회
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const count = await prisma.recording.count({
+      where: {
+        userId: user.id,
+        createdAt: {
+          gte: today,
+        },
+      },
+    });
 
     return NextResponse.json({
       message: "File uploaded successfully",
-      url: publicUrlData.publicUrl,
+      url: fileUrl,
+      count,
     });
   } catch (error) {
     console.error("File Upload Error:", error);

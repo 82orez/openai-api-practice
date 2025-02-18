@@ -45,11 +45,11 @@ const AudioRecorder = () => {
         console.log(`File saved at: ${result.url}`);
         // alert("Successfully uploaded audio.");
       } else {
-        alert("Failed to save file");
+        alert(result.error);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
-      alert("An error occurred while saving the recording.");
+      alert(error);
     } finally {
       setIsUpLoading(false);
     }

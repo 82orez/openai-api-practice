@@ -76,7 +76,7 @@ model VerificationToken {
 
 model Recording {
   id        String   @id @default(cuid())
-  userId    String   @unique
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   fileUrl   String
   createdAt DateTime @default(now())
