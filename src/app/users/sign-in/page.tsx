@@ -1,143 +1,189 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BiSolidMessageRounded } from "react-icons/bi";
-import { SiNaver } from "react-icons/si";
-import { FcGoogle } from "react-icons/fc";
+import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { GoEye } from "react-icons/go";
+import clsx from "clsx";
+import { TbMinusVertical } from "react-icons/tb";
+import { PiEyeClosed } from "react-icons/pi";
+import { BiSolidMessageRounded } from "react-icons/bi";
 
-export default function SignInPage() {
+export default function SignIn() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 비밀번호 표시 상태 추가
+
   // * 클라이언트 컴포넌트에서 로그인 session 정보 가져오기 : useSession()
   const { status, data } = useSession();
   console.log("status: ", status);
   console.log("data: ", data);
-  const router = useRouter();
 
-  // 로그인이 되어 있을 때 이 페이지로 접근하면 루트 페이지 '/'로 되돌림.
+  // * 로그인이 되어 있을 때 이 페이지로 접근하면 루트 페이지 '/' 로 되돌림.
   useEffect(() => {
     if (status === "authenticated") {
       router.replace("/");
     }
   }, [status, router]);
 
-  // * 중복된 email 로 다른 소셜 로그인 인증을 시도했을 때 signIn 콜백 함수에서 반환한 에러 관련 메서지를 받아서 UI 기반 오류 메세지 출력.
-  // 콜백 함수에서 반환한 에러 관련 메서지를 처리하기 위한 상태 설정.
-  const [error, setError] = useState<null | string>(null);
-  const [provider, setProvider] = useState<null | string>(null);
-
-  const [email, setEmail] = useState<null | string>(null);
+  // * auth.ts 파일에서 반환한 에러 관련 query 문들을  처리하기 위한 상태 설정.
+  const [errorSocialLogIn, setErrorSocialLogIn] = useState<null | string>(null);
+  const [existEmail, setExistEmail] = useState("");
 
   useEffect(() => {
     // ? 오류 방지를 위해 아래 코드를 클라이언트 환경에서만 실행할 수 있도록 설정.
     if (typeof window !== "undefined") {
+      // * auth.ts 파일에서 반환한 에러 관련 query 문들을 처리.
       const params = new URLSearchParams(window.location.search);
-      setError(params.get("error"));
-      setProvider(params.get("provider"));
-      setEmail(params.get("email"));
+      setErrorSocialLogIn(params.get("emailExistsError"));
+      setExistEmail(params.get("existEmail"));
     }
   }, []);
 
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isKakaoLoading, setIsKakaoLoading] = useState(false);
-  const [isNaverLoading, setIsNaverLoading] = useState(false);
 
-  const handleClickGoogle = async () => {
-    setIsGoogleLoading(true);
-    await signIn("google", { callbackUrl: "/" });
-  };
   const handleClickKakao = async () => {
     setIsKakaoLoading(true);
     await signIn("kakao", { callbackUrl: "/" });
   };
-  const handleClickNaver = async () => {
-    setIsNaverLoading(true);
-    await signIn("naver", { callbackUrl: "/" });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error || "An error occurred during sign in.");
+        setIsLoading(false); // 에러 발생 시 로딩 상태 해제
+      } else {
+        // 로그인 성공 후 로딩 화면을 유지
+        setIsLoading(true);
+        // * 로그인에 성공하면 '/' 로 이동.
+        router.push("/");
+      }
+    } catch (error) {
+      setError("An unexpected error occurred.");
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div>
+    <div className="mx-auto mt-10 min-w-96 rounded-lg bg-white p-6 shadow-lg">
       {/*UI 기반 오류 메세지 부분*/}
-      {error === "alreadyLinked" && provider && (
-        <div className="animate-pulse rounded-md bg-cyan-200 p-4 text-red-800">
-          회원님께서는 이미 <span className={"font-bold"}>{email}</span> 을 사용하여 <span className={"font-bold"}>{provider}</span> 계정으로
-          가입하셨습니다. <span className={"font-bold"}>{provider}</span> 로그인으로 다시 시도해주세요.
+      {errorSocialLogIn === "EmailExists" && existEmail && (
+        <div className="mb-4 animate-pulse rounded-md bg-cyan-200 px-5 py-2 text-center text-red-800">
+          Email 로그인으로 다시 시도해주세요. 계정은 <span className={"font-bold"}>{existEmail}</span> 입니다.
         </div>
       )}
-      {error === "OAuthCallback" && (
-        <div className="animate-pulse rounded-md bg-red-100 p-4 text-red-800">네트워크 오류입니다. 잠시 후 다시 시도해 주세요.</div>
-      )}
 
-      {status === "loading" ? (
-        <div className={"flex h-screen items-center justify-center"}>
-          <div className={"animate-pulse text-4xl font-bold"}>Loading...</div>
+      <h1 className="mb-10 text-xl font-semibold">로그인 하기</h1>
+
+      <div className="relative">
+        <button
+          type="button"
+          onClick={handleClickKakao}
+          disabled={isKakaoLoading || isLoading}
+          className="flex w-full items-center rounded-md border px-12 py-2 text-center font-semibold disabled:opacity-80"
+          style={{ backgroundColor: "#FEE500" }}>
+          {isKakaoLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <BiSolidMessageRounded size={25} />}
+          <div className={"grow"} style={{ color: "rgba(0, 0, 0, 0.85)" }}>
+            카카오로 시작하기
+          </div>
+        </button>
+      </div>
+
+      <div className="my-6 flex items-center">
+        <hr className="flex-grow border-t border-gray-300" />
+        <span className="px-3 text-sm text-gray-500">또는 이메일로 로그인</span>
+        <hr className="flex-grow border-t border-gray-300" />
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            placeholder="abc@example.com"
+          />
         </div>
-      ) : (
-        <>
-          <div className="flex flex-col gap-6">
-            <div className="text-center text-xl font-semibold md:text-2xl">줌마영어 사관학교에 오신 것을 환영합니다.</div>
-            <h1 className="text-center text-lg font-semibold">로그인 또는 회원가입</h1>
-          </div>
 
-          <div className="mx-auto mt-16 flex max-w-[320px] flex-col gap-5">
-            {isGoogleLoading ? (
-              <div className={"flex items-center justify-center"}>
-                <AiOutlineLoading3Quarters className={"animate-spin"} />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={handleClickGoogle}
-                className="flex items-center rounded-md border border-gray-700 px-5 py-3 text-center text-sm font-semibold">
-                <FcGoogle className="text-xl" />
-                <div className={"grow"}>Google 로그인</div>
-              </button>
+        <div className="relative">
+          <label htmlFor="password" className="block text-sm font-medium">
+            Password
+          </label>
+          <input
+            type={showPassword ? "text" : "password"} // showPassword 상태에 따라 타입 변경
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+            placeholder="비밀 번호를 입력해주세요."
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className={clsx("absolute right-3 top-[2.1rem] text-gray-600 hover:text-gray-800", { hidden: !formData.password })}>
+            {showPassword ? <GoEye size={25} /> : <PiEyeClosed size={25} />}
+          </button>
+        </div>
+
+        <div className={"relative"}>
+          <button
+            type="submit"
+            className={clsx(
+              "flex h-10 w-full items-center justify-center rounded-md bg-blue-600 px-4 font-medium text-white hover:bg-blue-700 disabled:opacity-80",
+              {
+                "opacity-100": isLoading,
+              },
             )}
+            disabled={!formData.email || !formData.password || isLoading || isKakaoLoading}>
+            {isLoading ? "로그인 중..." : "Email 로그인"}
+          </button>
+          {isLoading && <AiOutlineLoading3Quarters className={"absolute left-16 top-3.5 animate-spin"} />}
+        </div>
+      </form>
 
-            {isKakaoLoading ? (
-              <div className={"flex items-center justify-center"}>
-                <AiOutlineLoading3Quarters className={"animate-spin"} />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={handleClickKakao}
-                className="flex items-center rounded-md border border-gray-700 px-5 py-3 text-center text-sm font-semibold"
-                style={{ backgroundColor: "#FEE500" }}>
-                <BiSolidMessageRounded className={"text-xl"} />
-                <div className={"grow"} style={{ color: "rgba(0, 0, 0, 0.85)" }}>
-                  카카오 로그인
-                </div>
-              </button>
-            )}
+      {error && <p className="mt-2 animate-pulse text-center text-red-500">{error}</p>}
 
-            {isNaverLoading ? (
-              <div className={"flex items-center justify-center"}>
-                <AiOutlineLoading3Quarters className={"animate-spin"} />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={handleClickNaver}
-                className="flex items-center rounded-md border border-gray-700 px-5 py-3 text-center text-sm font-semibold"
-                style={{ backgroundColor: "#02C759" }}>
-                <div className={"flex h-[20px] w-[20px] items-center justify-center"}>
-                  <SiNaver className={"text-md text-white"} />
-                </div>
-                <div className={"grow text-white"}>네이버 로그인</div>
-              </button>
-            )}
-          </div>
+      <div className={clsx("mt-3 flex justify-around", { "pointer-events-none": isLoading })}>
+        <Link href={"/users/sign-up"} className={"min-w-[145px] text-center hover:underline"}>
+          이메일 회원 가입
+        </Link>
+        <div className={"flex items-center justify-center"}>
+          <TbMinusVertical className={"h-full"} />
+        </div>
+        <Link href={"/users/reset-password"} className={"min-w-[145px] text-center hover:underline"}>
+          비밀번호 재설정
+        </Link>
+      </div>
 
-          <div className={"mx-auto mt-20 w-fit hover:underline"}>
-            <Link href={"/"} className={""}>
-              Move to Home
-            </Link>
-          </div>
-        </>
-      )}
+      <div className={clsx("mt-10 flex justify-center hover:underline", { "pointer-events-none": isLoading || isKakaoLoading })}>
+        <Link href={"/"}>Back to Home</Link>
+      </div>
     </div>
   );
 }

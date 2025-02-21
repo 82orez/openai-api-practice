@@ -101,6 +101,54 @@ export type Database = {
           },
         ]
       }
+      EmailVerificationToken: {
+        Row: {
+          createdAt: string
+          email: string
+          expires: string
+          id: string
+          token: string
+        }
+        Insert: {
+          createdAt?: string
+          email: string
+          expires: string
+          id: string
+          token: string
+        }
+        Update: {
+          createdAt?: string
+          email?: string
+          expires?: string
+          id?: string
+          token?: string
+        }
+        Relationships: []
+      }
+      PasswordResetToken: {
+        Row: {
+          createdAt: string
+          email: string
+          expires: string
+          id: string
+          token: string
+        }
+        Insert: {
+          createdAt?: string
+          email: string
+          expires: string
+          id: string
+          token: string
+        }
+        Update: {
+          createdAt?: string
+          email?: string
+          expires?: string
+          id?: string
+          token?: string
+        }
+        Relationships: []
+      }
       Recordings: {
         Row: {
           createdAt: string
@@ -165,29 +213,35 @@ export type Database = {
       User: {
         Row: {
           createdAt: string
+          credentials: boolean
           email: string
           emailVerified: string | null
           id: string
           image: string | null
           name: string | null
+          password: string | null
           updatedAt: string
         }
         Insert: {
           createdAt?: string
+          credentials?: boolean
           email: string
           emailVerified?: string | null
           id: string
           image?: string | null
           name?: string | null
+          password?: string | null
           updatedAt: string
         }
         Update: {
           createdAt?: string
+          credentials?: boolean
           email?: string
           emailVerified?: string | null
           id?: string
           image?: string | null
           name?: string | null
+          password?: string | null
           updatedAt?: string
         }
         Relationships: []

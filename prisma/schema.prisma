@@ -18,6 +18,8 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
+  password      String? // 추가 부분
+  credentials   Boolean   @default(false) // 이메일로 회원가입할 때만 True
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -72,6 +74,26 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+// 이메일 가입 시 인증코드
+model EmailVerificationToken {
+  id      String   @id @default(cuid())
+  email   String   @unique
+  token   String
+  expires DateTime
+
+  createdAt DateTime @default(now())
+}
+
+// 비밀번호 변경 시에 생성된 링크
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String   @unique
+  token   String
+  expires DateTime
+
+  createdAt DateTime @default(now())
 }
 
 model Recordings {

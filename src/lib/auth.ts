@@ -1,9 +1,10 @@
 import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import Google from "next-auth/providers/google";
-import Naver from "next-auth/providers/naver";
+import { compare } from "bcryptjs";
+import CredentialsProvider from "next-auth/providers/credentials";
 import Kakao from "next-auth/providers/kakao";
+import { emailSignUpIndicator } from "@/lib/emailSignUpIndicator";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -13,19 +14,46 @@ export const authOptions: NextAuthOptions = {
     updateAge: 60 * 60 * 2, // 2 hours
   },
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }),
-    Naver({
-      clientId: process.env.NAVER_CLIENT_ID || "",
-      clientSecret: process.env.NAVER_CLIENT_SECRET || "",
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "user@example.com" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required.");
+        }
+
+        // 이메일로 회원 가입 여부 판단
+        // 클라이언트로부터 넘겨 받은 이메일이 서버에 등록된 사용자인지 확인
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user) {
+          throw new Error("가입되지 않은 이메일입니다.");
+        }
+
+        if (!user.credentials) {
+          throw new Error("Kakao 로그인을 이용해 주세요.");
+        }
+
+        // 비밀번호 검증
+        const isValidPassword = await compare(credentials.password, user.password);
+        if (!isValidPassword) {
+          throw new Error("비밀 번호가 일치하지 않습니다.");
+        }
+
+        return { id: user.id, name: user.name, email: user.email };
+      },
     }),
     Kakao({
       clientId: process.env.KAKAO_CLIENT_ID || "",
       clientSecret: process.env.KAKAO_CLIENT_SECRET || "",
     }),
   ],
+  // * sign-in 페이지의 경로 지정.
   pages: { signIn: "/users/sign-in" },
   callbacks: {
     jwt: async ({ user, token }) => {
@@ -44,49 +72,36 @@ export const authOptions: NextAuthOptions = {
         ...token,
       },
     }),
-
-    // * 소셜 로그인 시에 provider 로부터 { account, profile } 정보를 받아 온다.
-    // * 현재 로그인 시도 중인 소셜 로그인의 provider 정보는 account?.provider 에 담겨 있다.
-    // * 소셜 로그인 별로 가입한 이메일의 정보는 profile 에 확인할 수 있는데, 자세한 장소는 provider 마다 다르다.
-    // ? kakao : profile?.["kakao_account"]?.email
-    // ? naver : profile?.["response"]?.email
-    // ? google : profile?.email
-    signIn: async ({ account, profile }) => {
+    signIn: async ({ account, user, profile, credentials, email }) => {
       console.log("account: ", account);
       console.log("profile: ", profile);
+      console.log("user: ", user);
+      console.log("email: ", email);
+      console.log("credentials: ", credentials);
 
-      // * provider 마다 다른 가입 email 정보를 하나로 통일해 주는 과정을 거친다.
       let forCheckEmail = "";
 
       if (account?.provider === "kakao") {
         forCheckEmail = profile?.["kakao_account"]?.email; // 실제 카카오 프로필의 이메일 경로를 확인해야 함
-      } else if (account?.provider === "naver") {
-        forCheckEmail = profile?.["response"]?.email; // 실제 네이버 프로필의 이메일 경로를 확인해야 함
-      } else {
-        forCheckEmail = profile?.email || "";
-      }
 
-      // * 사용자가 회원 가입 또는 로그인을 시도하면 데이터베이스에 동일 이메일을 가진 사용자가 존재하는지 확인하고, 없으면 해당 email 과 소셜 제공자로 회원 가입 및 로그인을 진행한다.
-      // * 하지만 동일한 email(forCheckEmail)을 소셜 로그인을 진행한 사용자가 이미 존재하면 그 정보를 DB 로부터 가져오는데, 이때 해당 사용자의 relation 된 accounts 정보도 함께 가져온다.
-      if (account?.provider && forCheckEmail) {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: forCheckEmail },
-          include: { accounts: true },
+        // * 같은 이메일 계정으로 먼저 Email SignUp 을 진행했는지 확인.
+        const existingUser = await prisma.user.findFirst({
+          where: {
+            email: forCheckEmail,
+            // *
+            name: emailSignUpIndicator,
+          },
         });
 
-        // * 위에서 가져온 정보를 토대로 기존 provider 정보와 현재 로그인 진행 중인 소셜 provider 가 일치할 경우 true 를 반환하고 로그인을 정상적으로 진행한다.
         if (existingUser) {
-          console.log("existingUser: ", existingUser);
-          const isProviderLinked = existingUser.accounts.some((acc) => acc.provider === account.provider);
-
-          // * 하지만 기존 provider 정보와 현재 로그인 진행 중인 소셜 provider 가 불일치할 경우에는 error 메세지와 관련된 경로를 반환한다.
-          if (!isProviderLinked) {
-            // * 반환 경로에 주의: 반드시 로그인 페이지 경로로 수정해야 함.
-            return `/users/sign-in?error=alreadyLinked&provider=${existingUser.accounts[0].provider}&email=${existingUser.email}`;
-          }
+          // * 반환값: 오류를 표시할 redirect 클라이언트 경로 + ? + 쿼리문과 그에 해당하는 값
+          // ? 로그인 페이지에 오류를 표시할 경우 반환 경로는 pages 속성에서 설정한 로그인 페이지 경로와 같아야 함.
+          // ? existingUser 가 존재(emailExistsError=EmailExists)하고 그 해당 이메일 계정은 existEmail=${forCheckEmail}
+          return `/users/sign-in?emailExistsError=EmailExists&existEmail=${forCheckEmail}`;
         }
       }
-      return true; // 로그인 허용
+
+      return true;
     },
   },
 };

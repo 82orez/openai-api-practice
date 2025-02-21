@@ -1,166 +1,248 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useMutation } from "@tanstack/react-query";
+import clsx from "clsx";
 import Link from "next/link";
-import axios from "axios";
-// import { useState } from "react";
-// import useAuthStore from "@/store/authStore"; // Zustand store for auth
-// import { supabase } from "@/lib/supabaseClient";
+import { GoEye } from "react-icons/go";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { PiEyeClosed } from "react-icons/pi";
 
-const Signup = () => {
+export default function SignUp() {
+  const router = useRouter();
+
+  const [step, setStep] = useState<"inputEmail" | "verifyCode" | "inputPassword">("inputEmail");
   const [email, setEmail] = useState("");
-  const [isValidEmail, setIsValidEmail] = useState(false);
-  const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [timer, setTimer] = useState<number | null>(null);
-
-  const [token, setToken] = useState("");
-  const [alertToken, setAlertToken] = useState<string | null>(null);
-
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [alertPasswordMessage, setAlertPasswordMessage] = useState<string | null>(null);
-  const [alertConfirmPasswordMessage, setAlertConfirmPasswordMessage] = useState<string | null>(null);
+  const [token, setToken] = useState("");
+  const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // 비밀번호 확인 입력 상태 추가
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const router = useRouter();
+  // 이메일 유효성 검사
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  useEffect(() => {
-    if (timer && timer > 0) {
-      const intervalId = setInterval(() => setTimer((prev) => prev! - 1), 1000);
-      return () => clearInterval(intervalId);
-    } else if (timer === 0) {
-      setAlertMessage("인증 코드가 만료 되었어요.");
-      setTimer(null);
-    }
-  }, [timer]);
+  // 비밀번호 유효성 검사 (영문 포함 6자리 이상)
+  const isValidPassword = (password: string) => /^(?=.*[A-Za-z]).{6,}$/.test(password);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    setIsValidEmail(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value));
-  };
+  const isPasswordMatch = password === confirmPassword; // 비밀번호 일치 여부 확인
+  const isPasswordValid = isValidPassword(password); // 비밀번호 유효성 확인
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value);
-    const valid = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value);
-    setAlertPasswordMessage(valid ? null : "영문, 숫자 포함 8자리 이상으로 작성해 주세요.");
-  };
+  const sendVerification = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setConfirmPassword(value);
-    if (value !== password) {
-      setAlertConfirmPasswordMessage("비밀번호가 일치하지 않습니다.");
-    } else {
-      setAlertConfirmPasswordMessage("비밀번호가 일치합니다.");
-    }
-  };
-
-  const requestEmailAuth = async () => {
-    if (!isValidEmail) {
-      setAlertMessage("정확한 이메일을 입력해 주세요.");
-      return;
-    }
-
-    try {
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/email`, { email });
-      if (data.provider) {
-        setAlertMessage(`이미 가입한 ${data.provider} 계정이 있어요!`);
-      } else {
-        setAlertMessage("메일로 인증 코드를 발송했어요.");
-        setTimer(180);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "오류가 발생했습니다.");
       }
-    } catch (error) {
-      console.error(error);
-      setAlertMessage("인증 요청 중 오류가 발생했습니다.");
-    }
-  };
+      return data;
+    },
+    onSuccess: (data) => {
+      setMessage(data.message || "Verification code sent to email.");
+      setErrorMessage("");
+      setStep("verifyCode");
+    },
+    onError: (error: any) => {
+      setMessage(`Error: ${error.message}`);
+      setErrorMessage(error.message);
+    },
+  });
 
-  const verifyToken = async () => {
-    try {
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/verify`, { email, token });
-      if (data.result === "User verified") {
-        setAlertToken("인증에 성공했습니다.");
-        setTimer(null);
-      } else {
-        setAlertToken("인증에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const validateCode = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/auth/validate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, token }),
+      });
 
-  const handleSignup = async () => {
-    try {
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, { email, password });
-      if (data.result === "Signup success") {
-        alert("회원 가입이 완료 되었습니다.");
-        router.push("/login");
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Invalid or expired token.");
       }
-    } catch (error) {
-      console.error(error);
-      alert("회원 가입 중 오류가 발생했습니다.");
-    }
-  };
+      return data;
+    },
+    onSuccess: (data) => {
+      setStep("inputPassword");
+      setMessage(data.message || "Email verified successfully!");
+      setErrorMessage("");
+    },
+    onError: (error: any) => {
+      setMessage(`Error: ${error.message}`);
+      setErrorMessage(`${error.message}`);
+    },
+  });
+
+  const registerUser = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Registration failed");
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      setMessage(data.message || "Registration successful!");
+      setErrorMessage("");
+      alert(`${data.message} 로그인 페이지로 이동합니다.`);
+      // * 회원 가입에 성공하면 이동할 page
+      router.push("/users/sign-in");
+    },
+    onError: (error: any) => {
+      setMessage(`Error: ${error.message}`);
+      setErrorMessage(`${error.message}`);
+    },
+  });
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <h1 className="mb-4 text-2xl font-bold">회원 가입</h1>
-        <h3 className="mb-6 text-gray-600">이메일과 비밀번호를 입력해 주세요.</h3>
+    <div className="mx-auto mt-10 min-w-96 rounded-lg bg-white p-6 shadow-lg">
+      <h1 className="mb-10 text-2xl font-semibold">회원 가입하기</h1>
 
-        <div className="mb-4">
-          <label className="mb-2 block text-left">이메일</label>
+      {step === "inputEmail" ? (
+        <>
+          <p className={"mb-4 border-b-4 border-blue-400 pb-1 text-xl"}>Step 1. 이메일 입력하기</p>
+
+          <label htmlFor="email" className="mb-2 block">
+            사용하실 이메일을 입력해 주세요.
+          </label>
           <input
+            id="email"
             type="email"
-            placeholder="Email address"
-            className="w-full rounded-md border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={handleEmailChange}
-            disabled={alertMessage === "메일로 인증 코드를 발송했어요."}
+            placeholder="abc@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mb-3 block w-full border p-2"
           />
-          {alertMessage && <p className="mt-1 text-sm text-red-500">{alertMessage}</p>}
-        </div>
+          <div className={"relative"}>
+            <button
+              onClick={() => sendVerification.mutate()}
+              disabled={!isValidEmail(email) || sendVerification.isPending}
+              // disabled={true}
+              className={clsx("w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80")}>
+              {sendVerification.isPending ? "인증 코드 보내는 중..." : "이메일로 인증 코드 보내기"}
+            </button>
+            {sendVerification.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin"} />}
+          </div>
+        </>
+      ) : step === "verifyCode" ? (
+        <>
+          <p className={"mb-4 border-b-4 border-green-400 pb-1 text-xl"}>Step 2. 인증코드 입력하기</p>
 
-        <button
-          className="w-full rounded-md bg-green-500 py-2 text-white hover:bg-green-600 disabled:opacity-50"
-          onClick={requestEmailAuth}
-          disabled={alertMessage === "메일로 인증 코드를 발송했어요."}>
-          {timer ? `${Math.floor(timer / 60)}:${timer % 60}` : "인증 요청"}
-        </button>
-
-        <div className="mt-6">
-          <label className="mb-2 block text-left">비밀번호</label>
-          <div className="relative">
+          <div className={clsx("", { hidden: !message || message === "Error: 이미 가입된 이메일입니다." })}>
+            <label htmlFor="token" className="mb-2 mt-2 block">
+              인증코드를 입력해 주세요.
+            </label>
             <input
-              type={showPassword ? "text" : "password"}
-              placeholder="비밀 번호를 입력해 주세요."
-              className="w-full rounded-md border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={handlePasswordChange}
-              disabled={alertToken !== "인증에 성공했습니다."}
+              id="token"
+              type="text"
+              placeholder="6자리 인증코드"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="mb-1 block w-full border p-2"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 transform cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            <div className={"relative"}>
+              <button
+                onClick={() => validateCode.mutate()}
+                disabled={!token || validateCode.isPending}
+                className="mt-2 w-full rounded-md bg-green-600 p-2 text-white hover:bg-green-500 disabled:opacity-80">
+                {validateCode.isPending ? "인증 중..." : "인증하기"}
+              </button>
+              {validateCode.isPending && <AiOutlineLoading3Quarters className={"absolute left-16 top-5 animate-spin"} />}
             </div>
           </div>
-          {alertPasswordMessage && <p className="mt-1 text-sm text-red-500">{alertPasswordMessage}</p>}
-        </div>
+        </>
+      ) : (
+        <>
+          <p className={"mb-4 border-b-4 border-blue-400 pb-1 text-xl"}>Step 3. 비밀번호 등록하기</p>
+          <label htmlFor="password" className="mb-1 block">
+            비밀 번호를 입력해 주세요.
+          </label>
+          <div className={"relative"}>
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"} // showPassword 상태에 따라 타입 변경
+              placeholder="영문 포함 6자리 이상"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mb-3 block w-full border p-2"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={clsx("absolute right-3 top-2.5 text-gray-600 hover:text-gray-800", { hidden: !password })}>
+              {showPassword ? <GoEye size={25} /> : <PiEyeClosed size={25} />}
+            </button>
+          </div>
 
-        <button
-          className="mt-6 w-full rounded-md bg-blue-500 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
-          onClick={handleSignup}
-          disabled={alertConfirmPasswordMessage !== "비밀번호가 일치합니다."}>
-          회원 가입
-        </button>
+          {!isPasswordValid && password && <p className="mb-3 text-red-500">비밀번호는 영문을 포함하여 6자리 이상이어야 합니다.</p>}
 
-        <Link href="/login" className="mt-4 block text-center text-blue-500 hover:underline">
-          다른 계정으로 로그인
-        </Link>
+          <label htmlFor="confirmPassword" className="mb-1 block">
+            비밀번호를 확인해 주세요.
+          </label>
+          <div className="relative">
+            <input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="비밀번호를 확인"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="mb-3 block w-full border p-2"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className={clsx("absolute right-3 top-2.5 text-gray-600 hover:text-gray-800", {
+                hidden: !password || !confirmPassword,
+              })}>
+              {showConfirmPassword ? <GoEye size={25} /> : <PiEyeClosed size={25} />}
+            </button>
+          </div>
+
+          <div className={clsx("", { hidden: !password || !confirmPassword })}>
+            {!isPasswordMatch ? (
+              <p className="mb-3 animate-pulse text-red-500">비밀번호가 일치하지 않습니다.</p>
+            ) : (
+              <p className="mb-3 text-green-500">비밀번호가 일치합니다.</p>
+            )}
+          </div>
+
+          <div className={"relative"}>
+            <button
+              disabled={!isPasswordMatch || !isPasswordMatch || registerUser.isPending || !password || !confirmPassword}
+              onClick={() => registerUser.mutate()}
+              className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
+              {registerUser.isPending ? "회원 가입 중..." : "회원 가입 완료하기"}
+            </button>
+            {registerUser.isPending && <AiOutlineLoading3Quarters className={"absolute left-14 top-3.5 animate-spin"} />}
+          </div>
+        </>
+      )}
+
+      {errorMessage && <p className="mt-2 animate-pulse text-center text-red-500">{errorMessage}</p>}
+      {/*{message.startsWith("Error") && <p className={"mt-2 text-red-500"}>{message}</p>}*/}
+      {/*{message && <p className={`mt-2 ${message.startsWith("Error") ? "text-red-500" : "text-green-500"}`}>{message}</p>}*/}
+
+      <div
+        className={clsx("mt-20 flex justify-center hover:underline", {
+          "pointer-events-none": sendVerification.isPending || validateCode.isPending || registerUser.isPending,
+        })}>
+        <Link href={"/"}>Back to Home</Link>
       </div>
     </div>
   );
-};
-
-export default Signup;
+}
