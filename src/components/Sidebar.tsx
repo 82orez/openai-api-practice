@@ -98,8 +98,8 @@ export default function Sidebar() {
 
       {data && (
         <div>
-          <div>Hello~ {data?.user?.name}</div>
-          <img src={data?.user?.image || undefined} width={50} height={50} alt={data?.user?.name || ""} className={"rounded-full"} />
+          <div>Hello~ {data?.user?.email}</div>
+          {/*<img src={data?.user?.image || undefined} width={50} height={50} alt={data?.user?.name || ""} className={"rounded-full"} />*/}
           <SignOutButton />
         </div>
       )}
