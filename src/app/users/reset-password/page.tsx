@@ -38,7 +38,7 @@ export default function ResetPassword() {
   });
 
   return (
-    <div className="mx-auto mt-10 max-w-md rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
       <h1 className="mb-10 text-xl font-semibold">비밀번호 재설정</h1>
 
       {!isEmailSent ? (
@@ -61,7 +61,7 @@ export default function ResetPassword() {
               className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
               {sendResetLink.isPending ? "링크 보내는 중..." : "비밀번호 재설정 링크 보내기"}
             </button>
-            {sendResetLink.isPending && <AiOutlineLoading3Quarters className={"absolute left-12 top-3.5 animate-spin"} />}
+            {sendResetLink.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin"} />}
           </div>
         </>
       ) : (

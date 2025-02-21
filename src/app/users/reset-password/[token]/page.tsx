@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
   });
 
   return (
-    <div className="mx-auto mt-10 max-w-md rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
       <h1 className="mb-10 text-xl font-semibold">비밀번호 변경</h1>
 
       <div className="relative mb-4">
@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
         <input
           id="password"
           type={showPassword ? "text" : "password"}
-          placeholder="새로운 비밀번호"
+          placeholder="영문 포함 6자리 이상"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="block w-full border p-2 pr-10"
@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
           {showPassword ? <GoEye size={25} /> : <PiEyeClosed size={25} />}
         </button>
 
-        {!isPasswordValid && password && <p className="mb-3 mt-1 text-red-500">비밀번호는 영문을 포함하여 6자리 이상이어야 합니다.</p>}
+        {!isPasswordValid && password && <p className="mb-3 mt-1 text-red-500">영문 포함하여 6자리 이상이어야 합니다.</p>}
       </div>
 
       <label htmlFor="confirmPassword" className="mb-1 block">
@@ -119,7 +119,7 @@ export default function ResetPasswordPage() {
           className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
           {resetPassword.isPending ? "비밀번호 변경 중..." : "비밀번호 변경하기"}
         </button>
-        {resetPassword.isPending && <AiOutlineLoading3Quarters className={"absolute left-16 top-3.5 animate-spin"} />}
+        {resetPassword.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin"} />}
       </div>
 
       {/* 오류 메시지 표시 */}
