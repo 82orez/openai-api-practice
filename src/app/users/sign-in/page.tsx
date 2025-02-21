@@ -84,7 +84,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-[450px] rounded-lg bg-white p-6 shadow-lg">
       {/*UI 기반 오류 메세지 부분*/}
       {errorSocialLogIn === "EmailExists" && existEmail && (
         <div className="mb-4 animate-pulse rounded-md bg-cyan-200 px-5 py-2 text-center text-red-800">
