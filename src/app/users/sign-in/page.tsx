@@ -101,7 +101,7 @@ export default function SignIn() {
           disabled={isKakaoLoading || isLoading}
           className="flex w-full items-center rounded-md border px-10 py-2 text-center font-semibold disabled:opacity-80"
           style={{ backgroundColor: "#FEE500" }}>
-          {isKakaoLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <BiSolidMessageRounded size={25} />}
+          {isKakaoLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <BiSolidMessageRounded size={22} />}
           <div className={"grow"} style={{ color: "rgba(0, 0, 0, 0.85)" }}>
             카카오로 시작하기
           </div>
