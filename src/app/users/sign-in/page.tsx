@@ -84,7 +84,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="mx-auto mt-10 max-w-sm rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
       {/*UI 기반 오류 메세지 부분*/}
       {errorSocialLogIn === "EmailExists" && existEmail && (
         <div className="mb-4 animate-pulse rounded-md bg-cyan-200 px-5 py-2 text-center text-red-800">
@@ -99,7 +99,7 @@ export default function SignIn() {
           type="button"
           onClick={handleClickKakao}
           disabled={isKakaoLoading || isLoading}
-          className="flex w-full items-center rounded-md border px-12 py-2 text-center font-semibold disabled:opacity-80"
+          className="flex w-full items-center rounded-md border px-10 py-2 text-center font-semibold disabled:opacity-80"
           style={{ backgroundColor: "#FEE500" }}>
           {isKakaoLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <BiSolidMessageRounded size={25} />}
           <div className={"grow"} style={{ color: "rgba(0, 0, 0, 0.85)" }}>
@@ -163,7 +163,7 @@ export default function SignIn() {
             disabled={!formData.email || !formData.password || isLoading || isKakaoLoading}>
             {isLoading ? "로그인 중..." : "Email 로그인"}
           </button>
-          {isLoading && <AiOutlineLoading3Quarters className={"absolute left-16 top-3.5 animate-spin"} />}
+          {isLoading && <AiOutlineLoading3Quarters className={"absolute left-12 top-3.5 animate-spin"} />}
         </div>
       </form>
 
