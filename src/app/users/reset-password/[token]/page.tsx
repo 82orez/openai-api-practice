@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
   });
 
   return (
-    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-full rounded-lg bg-white p-4 shadow-lg md:w-[375px] md:p-6">
       <h1 className="mb-10 text-xl font-semibold">비밀번호 변경</h1>
 
       <div className="relative mb-4">
@@ -119,7 +119,7 @@ export default function ResetPasswordPage() {
           className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
           {resetPassword.isPending ? "비밀번호 변경 중..." : "비밀번호 변경하기"}
         </button>
-        {resetPassword.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin"} />}
+        {resetPassword.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin md:left-12"} />}
       </div>
 
       {/* 오류 메시지 표시 */}

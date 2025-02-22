@@ -38,7 +38,7 @@ export default function ResetPassword() {
   });
 
   return (
-    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-full rounded-lg bg-white p-4 shadow-lg md:w-[375px] md:p-6">
       <h1 className="mb-10 text-xl font-semibold">비밀번호 재설정</h1>
 
       {!isEmailSent ? (
@@ -61,7 +61,7 @@ export default function ResetPassword() {
               className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
               {sendResetLink.isPending ? "링크 보내는 중..." : "비밀번호 재설정 링크 보내기"}
             </button>
-            {sendResetLink.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin"} />}
+            {sendResetLink.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin md:left-12"} />}
           </div>
         </>
       ) : (
@@ -69,7 +69,7 @@ export default function ResetPassword() {
       )}
 
       {/* 오류 메시지 표시 */}
-      {errorMessage && <p className="mt-3 text-red-500">{errorMessage}</p>}
+      {errorMessage && <p className="mt-3 text-center text-red-500">{errorMessage}</p>}
 
       <div className={clsx("mt-10 flex justify-center hover:underline", { "pointer-events-none": sendResetLink.isPending })}>
         <Link href="/">Back to Home</Link>
