@@ -110,7 +110,7 @@ export default function SignUp() {
   });
 
   return (
-    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-full rounded-lg bg-white p-4 shadow-lg md:w-[375px] md:p-6">
       <h1 className="mb-10 text-2xl font-semibold">회원 가입하기</h1>
 
       {step === "inputEmail" ? (
