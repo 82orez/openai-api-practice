@@ -20,7 +20,7 @@ export const NextLayout = ({ children }: Props) => {
         <div className="flex flex-1 flex-col lg:ml-64">
           <Header />
           <div className="flex flex-1 flex-col overflow-y-auto">
-            <main className="flex flex-1 flex-col border-2 bg-gray-200">{children}</main>
+            <main className="flex flex-1 flex-col border-2 bg-gray-50">{children}</main>
             <Footer />
           </div>
         </div>

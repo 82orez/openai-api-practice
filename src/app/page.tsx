@@ -1,22 +1,28 @@
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import Link from "next/link";
-import Extractor from "@/components/Extractor";
+import { FaArrowRight } from "react-icons/fa";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className={"flex flex-col gap-5 p-5"}>
-      <h1 className={"text-xl font-semibold"}>OpenAI API 체험관에 오신 것을 환영합니다.</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 px-6 text-white">
+      <header className="mb-10 text-center">
+        <h1 className="mb-4 text-4xl font-bold drop-shadow-lg md:text-5xl">영어 100문장 암기 사관학교에 오신 것을 환영합니다.</h1>
+        <p className="mx-auto max-w-2xl text-lg text-gray-200 md:text-xl">
+          효과적인 영어 학습을 위한 최고의 플랫폼! 100문장을 암기하고 영어 실력을 향상하세요.
+        </p>
+      </header>
 
-      <div>왼쪽 메뉴바에서 선택해 주세요.</div>
-
-      {/*<Link href={"/tts"}>Go to TTS! - 영어 Text 를 원어민 음성 파일로 만들기</Link>*/}
-      {/*<Link href={"/recorder"}>Go to Recorder! - 녹음한 파일을 다운 및 업로드하기</Link>*/}
-      {/*<Link href={"/record-text"}>Go to Record To Text Page! - 음성 파일에서 text 추출하기</Link>*/}
-      {/*<Link href={"/chatbot"}>Go to Chatbot! - text 기반의 기본 chatbot</Link>*/}
-      {/*<Link href={"/upgraded-chatbot"}>Go to Upgraded Chatbot! - text 로 질문하면 음성으로 대답 듣기</Link>*/}
-      {/*<Link href={"/audio-chatbot"}>Go to Audio Chatbot! - 음성을 입력하면 text 로 변환, 이에 대한 대답을 음성으로 듣기</Link>*/}
-      {/*<Link href={"/chat-plus"}>Go to Chat Plus! - 완전 음성형 Chatbot, 음성으로 질문하고 음성으로 대답 듣기</Link>*/}
-      {/*<Link href={"/whisper"}>Go to Whisper! - 오디오 파일에서 text 추출하기</Link>*/}
+      <Card className="flex w-full max-w-4xl flex-col items-center rounded-2xl bg-white p-6 text-gray-800 shadow-xl md:flex-row">
+        <Image src="/images/english-learning.png" width={300} height={300} alt="영어 학습" className="mb-4 rounded-lg shadow-md md:mb-0 md:mr-6" />
+        <CardContent className="text-center md:text-left">
+          <h2 className="mb-3 text-2xl font-semibold">영어 100문장으로 영어의 기초를 완성하세요</h2>
+          <p className="mb-4 text-gray-600">반복 학습과 체계적인 암기법을 통해 누구나 쉽게 영어 실력을 높일 수 있습니다.</p>
+          <Button className="flex items-center rounded-full bg-indigo-600 px-6 py-3 text-lg text-white hover:bg-indigo-700">
+            학습 시작하기 <FaArrowRight className="ml-2" />
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

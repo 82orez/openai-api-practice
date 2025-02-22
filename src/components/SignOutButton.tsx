@@ -9,7 +9,7 @@ export default function SignOutButton() {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className={"flex max-w-[120px] items-center justify-center gap-1 rounded-xl border-2 p-2"}>
+    <div className={"flex max-w-[120px] items-center justify-center gap-1 rounded-xl border-2 p-1"}>
       {isLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <PiSignOut size={25} />}
 
       <button
