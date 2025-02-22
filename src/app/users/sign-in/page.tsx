@@ -84,7 +84,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="mx-auto mt-10 w-[352px] rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto mt-10 w-full rounded-lg bg-white p-4 shadow-lg md:w-[375px] md:p-6">
       {/*UI 기반 오류 메세지 부분*/}
       {errorSocialLogIn === "EmailExists" && existEmail && (
         <div className="mb-4 animate-pulse rounded-md bg-cyan-200 px-5 py-2 text-center text-red-800">
@@ -99,7 +99,7 @@ export default function SignIn() {
           type="button"
           onClick={handleClickKakao}
           disabled={isKakaoLoading || isLoading}
-          className="flex w-full items-center rounded-md border px-10 py-2 text-center font-semibold disabled:opacity-80"
+          className="flex w-full items-center rounded-md border px-10 py-2 text-center font-semibold disabled:opacity-80 md:px-11"
           style={{ backgroundColor: "#FEE500" }}>
           {isKakaoLoading ? <AiOutlineLoading3Quarters className={"animate-spin"} /> : <BiSolidMessageRounded size={22} />}
           <div className={"grow"} style={{ color: "rgba(0, 0, 0, 0.85)" }}>
@@ -163,20 +163,20 @@ export default function SignIn() {
             disabled={!formData.email || !formData.password || isLoading || isKakaoLoading}>
             {isLoading ? "로그인 중..." : "Email 로그인"}
           </button>
-          {isLoading && <AiOutlineLoading3Quarters className={"absolute left-12 top-3.5 animate-spin"} />}
+          {isLoading && <AiOutlineLoading3Quarters className={"absolute left-12 top-3.5 animate-spin md:left-14"} />}
         </div>
       </form>
 
       {error && <p className="mt-2 animate-pulse text-center text-red-500">{error}</p>}
 
       <div className={clsx("mt-3 flex justify-around", { "pointer-events-none": isLoading })}>
-        <Link href={"/users/sign-up"} className={"min-w-[145px] text-center hover:underline"}>
+        <Link href={"/users/sign-up"} className={"min-w-32 text-center hover:underline"}>
           이메일 회원 가입
         </Link>
         <div className={"flex items-center justify-center"}>
           <TbMinusVertical className={"h-full"} />
         </div>
-        <Link href={"/users/reset-password"} className={"min-w-[145px] text-center hover:underline"}>
+        <Link href={"/users/reset-password"} className={"min-w-32 text-center hover:underline"}>
           비밀번호 재설정
         </Link>
       </div>
