@@ -136,7 +136,7 @@ export default function SignUp() {
               className={clsx("w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80")}>
               {sendVerification.isPending ? "인증 코드 보내는 중..." : "이메일로 인증 코드 보내기"}
             </button>
-            {sendVerification.isPending && <AiOutlineLoading3Quarters className={"absolute left-8 top-3.5 animate-spin"} />}
+            {sendVerification.isPending && <AiOutlineLoading3Quarters className={"absolute left-10 top-3.5 animate-spin md:left-11"} />}
           </div>
         </>
       ) : step === "verifyCode" ? (
