@@ -228,7 +228,7 @@ export default function SignUp() {
               className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-400 disabled:opacity-80">
               {registerUser.isPending ? "회원 가입 중..." : "회원 가입 완료하기"}
             </button>
-            {registerUser.isPending && <AiOutlineLoading3Quarters className={"absolute left-11 top-3.5 animate-spin"} />}
+            {registerUser.isPending && <AiOutlineLoading3Quarters className={"absolute left-11 top-3.5 animate-spin md:left-12"} />}
           </div>
         </>
       )}
