@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
   });
 
   return (
-    <div className="mx-auto mt-10 w-full rounded-lg bg-white p-4 shadow-lg md:w-[375px] md:p-6">
+    <div className="mx-auto mt-10 w-full max-w-[375px] rounded-lg bg-white p-6 shadow-lg">
       <h1 className="mb-10 text-xl font-semibold">비밀번호 변경</h1>
 
       <div className="relative mb-4">
